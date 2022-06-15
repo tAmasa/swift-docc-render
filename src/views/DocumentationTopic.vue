@@ -27,8 +27,12 @@
         @toggle-sidenav="isSideNavOpen = !isSideNavOpen"
       />
       <select v-model="version">
-    <option v-for="option in options" v-bind:key="option" :value="option">{{option}}</option>
-  </select>
+        <option v-for="version in versionList"
+        v-bind:key="version"
+        :value="version">
+        {{version}}
+        </option>
+      </select>
       <component
         :is="enableNavigator ? 'AdjustableSidebarWidth' : 'div'"
         v-bind="sidebarProps"
@@ -76,7 +80,7 @@
 
 <script>
 import { apply } from 'docc-render/utils/json-patch';
-import { patchToVersion } from 'docc-render/utils/version-patch';
+import { dataHasVersion, patchToVersion } from 'docc-render/utils/version-patch';
 import { TopicRole } from 'docc-render/constants/roles';
 import {
   clone,
@@ -116,14 +120,10 @@ export default {
       topicDataDefault: null,
       topicDataObjc: null,
       isSideNavOpen: false,
-      version: 'Galah',
+      version: null,
       store: DocumentationTopicStore,
       BreakpointName,
-      options: [
-        'Galah',
-        'Parakeet',
-        'Kookaburra',
-      ],
+      versions: null,
     };
   },
   computed: {
@@ -143,7 +143,6 @@ export default {
         if (this.topicDataDefault === null) {
           return null;
         }
-
         const patch = patchToVersion(this.version, this.topicDataDefault);
         // console.log('hasversions', this.topicDataDefault.versions);
         // return patch;
@@ -151,7 +150,20 @@ export default {
         return this.topicDataObjc ? this.topicDataObjc : patch;
       },
       set(data) {
+        if (dataHasVersion(data)) {
+          this.version = data.metadata.version.displayName;
+        }
         this.topicDataDefault = data;
+      },
+    },
+    versionList: {
+      get() {
+        if (dataHasVersion(this.topicDataDefault)) {
+          const versions = this.topicDataDefault.versions.map(x => x.version.displayName);
+          versions.unshift(this.topicDataDefault.metadata.version.displayName);
+          return versions;
+        }
+        return null;
       },
     },
     topicKey: ({ $route, topicProps }) => [

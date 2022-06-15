@@ -16,10 +16,12 @@ function getDiffIndex(displayName, data) {
   return index;
 }
 
-function dataHasNoVersion(data) {
-  if (!('version' in data.metadata)) return true;
-  if (!('versions' in data)) return true;
-  return false;
+function dataHasVersion(data) {
+  if (data === null) return false;
+  // if(!('metadata' in data)) return false;
+  if (!('version' in data.metadata)) return false;
+  if (!('versions' in data)) return false;
+  return true;
 }
 
 // function dataHasVersion(data) {
@@ -32,7 +34,7 @@ function noValidDisplayName(displayName) {
 }
 
 function patchToVersion(displayName, data) {
-  if (dataHasNoVersion(data)) return data;
+  if (!dataHasVersion(data)) return data;
   // console.log('func2');
   if (noValidDisplayName(displayName, data)) return data;
   // if(noValidPatch(displayName, data)) return data;
@@ -52,4 +54,4 @@ function patchToVersion(displayName, data) {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export { patchToVersion };
+export { dataHasVersion, patchToVersion };
