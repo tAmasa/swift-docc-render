@@ -113,6 +113,7 @@ export default {
       topicDataDefault: null,
       topicDataObjc: null,
       isSideNavOpen: false,
+      version: 'Parakeet',
       store: DocumentationTopicStore,
       BreakpointName,
     };
@@ -134,14 +135,14 @@ export default {
         if (this.topicDataDefault === null) {
           return null;
         }
-        const topicClone = clone(this.topicDataDefault);
-        const patch = patchToVersion('Parakeet', topicClone);
-        console.log(patch);
-        return patch;
-        // return this.topicDataObjc ? this.topicDataObjc : this.topicDataDefault;
+
+        const patch = patchToVersion(this.version, this.topicDataDefault);
+        // console.log('hasversions', this.topicDataDefault.versions);
+        // return patch;
+        // return patchToVersion('parakeet', this.topicDataDefault);
+        return this.topicDataObjc ? this.topicDataObjc : patch;
       },
       set(data) {
-        // this.topicDataDefault = patchToVersion('Galah', data);
         this.topicDataDefault = data;
       },
     },
