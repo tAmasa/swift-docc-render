@@ -73,6 +73,7 @@
 
 <script>
 import { apply } from 'docc-render/utils/json-patch';
+import { patchToVersion } from 'docc-render/utils/version-patch';
 import { TopicRole } from 'docc-render/constants/roles';
 import {
   clone,
@@ -130,9 +131,17 @@ export default {
     },
     topicData: {
       get() {
-        return this.topicDataObjc ? this.topicDataObjc : this.topicDataDefault;
+        if (this.topicDataDefault === null) {
+          return null;
+        }
+        const topicClone = clone(this.topicDataDefault);
+        const patch = patchToVersion('Parakeet', topicClone);
+        console.log(patch);
+        return patch;
+        // return this.topicDataObjc ? this.topicDataObjc : this.topicDataDefault;
       },
       set(data) {
+        // this.topicDataDefault = patchToVersion('Galah', data);
         this.topicDataDefault = data;
       },
     },
