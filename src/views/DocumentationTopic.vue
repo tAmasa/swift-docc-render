@@ -26,6 +26,9 @@
         :isWideFormat="enableNavigator"
         @toggle-sidenav="isSideNavOpen = !isSideNavOpen"
       />
+      <select v-model="version">
+    <option v-for="option in options" v-bind:key="option" :value="option">{{option}}</option>
+  </select>
       <component
         :is="enableNavigator ? 'AdjustableSidebarWidth' : 'div'"
         v-bind="sidebarProps"
@@ -113,9 +116,14 @@ export default {
       topicDataDefault: null,
       topicDataObjc: null,
       isSideNavOpen: false,
-      version: 'Parakeet',
+      version: 'Galah',
       store: DocumentationTopicStore,
       BreakpointName,
+      options: [
+        'Galah',
+        'Parakeet',
+        'Kookaburra',
+      ],
     };
   },
   computed: {
