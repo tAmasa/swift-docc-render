@@ -17,6 +17,7 @@ export default {
   state: {
     onThisPageSections: [],
     preferredLanguage: Settings.preferredLanguage,
+    preferredVersion: Settings.preferredVersion,
     ...changesState,
   },
   reset() {
@@ -30,6 +31,11 @@ export default {
   setPreferredLanguage(language) {
     this.state.preferredLanguage = language;
     Settings.preferredLanguage = this.state.preferredLanguage;
+  },
+  setpreferredVersion(version) {
+    this.state.preferredVersion = version;
+    console.log('setPref', version);
+    Settings.preferredVersion = this.state.preferredVersion;
   },
   ...changesActions,
 };

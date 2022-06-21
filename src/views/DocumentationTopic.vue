@@ -26,13 +26,24 @@
         :isWideFormat="enableNavigator"
         @toggle-sidenav="isSideNavOpen = !isSideNavOpen"
       />
-      <select v-model="version">
+      <select
+      v-model="version">
         <option v-for="version in versionList"
         v-bind:key="version"
         :value="version">
         {{version}}
         </option>
       </select>
+      <!-- <DropdownCustom
+    :value="version"
+    aria-label="Current tutorial"
+    class="tutorial-dropdown"
+    isSmall
+  > </DropdownCustom>
+  <primary-dropdown :options="options" :currentOption="version">
+  ></primary-dropdown>
+  <secondary-dropdown :options="versionList" :currentOption="version">
+  ></secondary-dropdown> -->
       <component
         :is="enableNavigator ? 'AdjustableSidebarWidth' : 'div'"
         v-bind="sidebarProps"
@@ -80,7 +91,7 @@
 
 <script>
 import { apply } from 'docc-render/utils/json-patch';
-import { dataHasVersion, patchToVersion } from 'docc-render/utils/version-patch';
+import { dataHasVersion, patchToVersion, initializeVersionList } from 'docc-render/utils/version-patch';
 import { TopicRole } from 'docc-render/constants/roles';
 import {
   clone,
@@ -100,6 +111,9 @@ import Navigator from 'docc-render/components/Navigator.vue';
 import DocumentationNav from 'theme/components/DocumentationTopic/DocumentationNav.vue';
 import { compareVersions, combineVersions } from 'docc-render/utils/schema-version-check';
 import { BreakpointName } from 'docc-render/utils/breakpoints';
+// import PrimaryDropdown from '../components/Tutorial/NavigationBar/PrimaryDropdown.vue';
+// import SecondaryDropdown from '../components/Tutorial/NavigationBar/SecondaryDropdown.vue';
+// import DropdownCustom from 'docc-render/components/DropdownCustom.vue';
 
 const MIN_RENDER_JSON_VERSION_WITH_INDEX = '0.3.0';
 
@@ -113,6 +127,9 @@ export default {
     Topic: DocumentationTopic,
     CodeTheme,
     Nav: DocumentationNav,
+    // DropdownCustom,
+    // PrimaryDropdown,
+    // SecondaryDropdown,
   },
   mixins: [performanceMetrics, onPageLoadScrollToFragment],
   data() {
@@ -123,7 +140,6 @@ export default {
       version: null,
       store: DocumentationTopicStore,
       BreakpointName,
-      versions: null,
     };
   },
   computed: {
@@ -140,31 +156,20 @@ export default {
     },
     topicData: {
       get() {
-        if (this.topicDataDefault === null) {
-          return null;
-        }
-        const patch = patchToVersion(this.version, this.topicDataDefault);
-        // console.log('hasversions', this.topicDataDefault.versions);
-        // return patch;
-        // return patchToVersion('parakeet', this.topicDataDefault);
-        return this.topicDataObjc ? this.topicDataObjc : patch;
+        if (this.topicDataDefault === null) return null;
+        const versionedTopicDataDefault = patchToVersion(this.version, this.topicDataDefault);
+        return this.topicDataObjc ? this.topicDataObjc : versionedTopicDataDefault;
       },
       set(data) {
         if (dataHasVersion(data)) {
+          console.log('displayName', data.metadata.version.displayName);
           this.version = data.metadata.version.displayName;
         }
         this.topicDataDefault = data;
       },
     },
-    versionList: {
-      get() {
-        if (dataHasVersion(this.topicDataDefault)) {
-          const versions = this.topicDataDefault.versions.map(x => x.version.displayName);
-          versions.unshift(this.topicDataDefault.metadata.version.displayName);
-          return versions;
-        }
-        return null;
-      },
+    versionList() {
+      return initializeVersionList(this.topicDataDefault);
     },
     topicKey: ({ $route, topicProps }) => [
       $route.path,
@@ -337,6 +342,13 @@ export default {
         return false;
       },
     },
+    store: {
+      default() {
+        return {
+          setPreferredVersion() {},
+        };
+      },
+    },
   },
   beforeDestroy() {
     this.$bridge.off('codeColors', this.handleCodeColorsChange);
@@ -344,6 +356,12 @@ export default {
   beforeRouteEnter(to, from, next) {
     fetchDataForRouteEnter(to, from, next).then(data => next((vm) => {
       vm.topicData = data; // eslint-disable-line no-param-reassign
+      if (to.query.version) {
+        // eslint-disable-next-line no-param-reassign
+        vm.topicData = patchToVersion(to.query.version, data);
+        // eslint-disable-next-line no-param-reassign
+        vm.topicDataDefault = data;
+      }
       if (to.query.language === Language.objectiveC.key.url && vm.objcOverrides) {
         vm.applyObjcOverrides();
       }
@@ -376,6 +394,9 @@ export default {
         // Send a 'rendered' message to the host when new data has been patched onto the DOM.
         this.newContentMounted();
       });
+    },
+    version(pageVersion) {
+      this.store.setPreferredVersion(pageVersion);
     },
   },
 };

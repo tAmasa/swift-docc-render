@@ -1,3 +1,4 @@
+/* eslint-disable no-extra-boolean-cast */
 /**
  * This source file is part of the Swift.org open source project
  *
@@ -18,33 +19,34 @@ function getDiffIndex(displayName, data) {
 
 function dataHasVersion(data) {
   if (data === null) return false;
-  // if(!('metadata' in data)) return false;
+  if (!('metadata' in data)) return false;
   if (!('version' in data.metadata)) return false;
   if (!('versions' in data)) return false;
   return true;
 }
 
-// function dataHasVersion(data) {
-//   if (!('version' in data.metadata))
-// }
-
-function noValidDisplayName(displayName) {
-  if (!displayName) return true;
-  return false;
+function initializeVersionList(data) {
+  if (dataHasVersion(data)) {
+    const versions = data.versions.map(x => x.version.displayName);
+    versions.unshift(data.metadata.version.displayName);
+    return versions;
+  }
+  return null;
 }
 
 function patchToVersion(displayName, data) {
+  console.log('1');
+  if (data === null) return null;
+  console.log('2');
+
   if (!dataHasVersion(data)) return data;
-  // console.log('func2');
-  if (noValidDisplayName(displayName, data)) return data;
-  // if(noValidPatch(displayName, data)) return data;
-  // if (dataHasNoVersion(data) || noValidDisplayName(displayName, data)) {
-  //   return data;
+  console.log('3');
 
   const patchIndex = getDiffIndex(displayName, data);
   if (patchIndex === -1) {
     return data;
   }
+  console.log('4', displayName, patchIndex);
 
   let patchJSON = clone(data);
   for (let i = 0; i <= patchIndex; i++) {
@@ -54,4 +56,4 @@ function patchToVersion(displayName, data) {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export { dataHasVersion, patchToVersion };
+export { dataHasVersion, patchToVersion, initializeVersionList };
