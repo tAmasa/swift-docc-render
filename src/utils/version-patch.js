@@ -35,18 +35,14 @@ function initializeVersionList(data) {
 }
 
 function patchToVersion(displayName, data) {
-  console.log('1');
   if (data === null) return null;
-  console.log('2');
 
   if (!dataHasVersion(data)) return data;
-  console.log('3');
 
   const patchIndex = getDiffIndex(displayName, data);
   if (patchIndex === -1) {
     return data;
   }
-  console.log('4', displayName, patchIndex);
 
   let patchJSON = clone(data);
   for (let i = 0; i <= patchIndex; i++) {

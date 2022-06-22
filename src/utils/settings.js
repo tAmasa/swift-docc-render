@@ -13,6 +13,7 @@ import { SafeLocalStorage } from 'docc-render/utils/storage';
 const StorageKey = {
   preferredColorScheme: 'developer.setting.preferredColorScheme',
   preferredLanguage: 'docs.setting.preferredLanguage',
+  preferredVersion: 'docs.setting.preferredVersion',
 };
 
 const DeprecatedKeys = {

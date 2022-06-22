@@ -32,9 +32,10 @@ export default {
     this.state.preferredLanguage = language;
     Settings.preferredLanguage = this.state.preferredLanguage;
   },
-  setpreferredVersion(version) {
+  setPreferredVersion(version) {
     this.state.preferredVersion = version;
     console.log('setPref', version);
+    console.log('setPref', this.state.preferredVersion);
     Settings.preferredVersion = this.state.preferredVersion;
   },
   ...changesActions,

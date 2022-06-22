@@ -26,14 +26,32 @@
         :isWideFormat="enableNavigator"
         @toggle-sidenav="isSideNavOpen = !isSideNavOpen"
       />
-      <select
+      <!-- <select
       v-model="version">
         <option v-for="version in versionList"
         v-bind:key="version"
         :value="version">
         {{version}}
         </option>
-      </select>
+      </select> -->
+
+      <BaseDropdown
+    v-model="version"
+    aria-label="Changes Versions"
+  >
+      <option v-for="version in versionList"
+        v-bind:key="version"
+        :value="version">
+        {{version}}
+        </option>
+  </BaseDropdown>
+
+      <!-- <LanguageToggle
+          v-if="interfaceLanguage && (swiftPath || objcPath)"
+          :interfaceLanguage="interfaceLanguage"
+          :objcPath="objcPath"
+          :swiftPath="swiftPath"
+        /> -->
       <!-- <DropdownCustom
     :value="version"
     aria-label="Current tutorial"
@@ -91,7 +109,7 @@
 
 <script>
 import { apply } from 'docc-render/utils/json-patch';
-import { dataHasVersion, patchToVersion, initializeVersionList } from 'docc-render/utils/version-patch';
+import { patchToVersion, initializeVersionList } from 'docc-render/utils/version-patch';
 import { TopicRole } from 'docc-render/constants/roles';
 import {
   clone,
@@ -113,7 +131,7 @@ import { compareVersions, combineVersions } from 'docc-render/utils/schema-versi
 import { BreakpointName } from 'docc-render/utils/breakpoints';
 // import PrimaryDropdown from '../components/Tutorial/NavigationBar/PrimaryDropdown.vue';
 // import SecondaryDropdown from '../components/Tutorial/NavigationBar/SecondaryDropdown.vue';
-// import DropdownCustom from 'docc-render/components/DropdownCustom.vue';
+import BaseDropdown from 'docc-render/components/BaseDropdown.vue';
 
 const MIN_RENDER_JSON_VERSION_WITH_INDEX = '0.3.0';
 
@@ -127,17 +145,19 @@ export default {
     Topic: DocumentationTopic,
     CodeTheme,
     Nav: DocumentationNav,
+    BaseDropdown,
     // DropdownCustom,
     // PrimaryDropdown,
     // SecondaryDropdown,
   },
   mixins: [performanceMetrics, onPageLoadScrollToFragment],
   data() {
+    console.log('version', DocumentationTopicStore.state.preferredVersion);
     return {
       topicDataDefault: null,
       topicDataObjc: null,
       isSideNavOpen: false,
-      version: null,
+      version: DocumentationTopicStore.state.preferredVersion,
       store: DocumentationTopicStore,
       BreakpointName,
     };
@@ -158,13 +178,13 @@ export default {
       get() {
         if (this.topicDataDefault === null) return null;
         const versionedTopicDataDefault = patchToVersion(this.version, this.topicDataDefault);
+        console.log('what is version?', this.version);
         return this.topicDataObjc ? this.topicDataObjc : versionedTopicDataDefault;
       },
       set(data) {
-        if (dataHasVersion(data)) {
-          console.log('displayName', data.metadata.version.displayName);
-          this.version = data.metadata.version.displayName;
-        }
+        // if (dataHasVersion(data)) {
+        //   this.version = data.metadata.version.displayName;
+        // }
         this.topicDataDefault = data;
       },
     },
@@ -342,13 +362,6 @@ export default {
         return false;
       },
     },
-    store: {
-      default() {
-        return {
-          setPreferredVersion() {},
-        };
-      },
-    },
   },
   beforeDestroy() {
     this.$bridge.off('codeColors', this.handleCodeColorsChange);
@@ -396,7 +409,9 @@ export default {
       });
     },
     version(pageVersion) {
+      console.log('versionWatcher', pageVersion);
       this.store.setPreferredVersion(pageVersion);
+      // this.store.setPreferredVersion(pageVersion);
     },
   },
 };
