@@ -176,10 +176,11 @@ export default {
     },
     topicData: {
       get() {
-        if (this.topicDataDefault === null) return null;
-        const versionedTopicDataDefault = patchToVersion(this.version, this.topicDataDefault);
-        console.log('what is version?', this.version);
-        return this.topicDataObjc ? this.topicDataObjc : versionedTopicDataDefault;
+        // if (this.topicDataDefault === null) return null;
+        // const versionedTopicDataDefault = patchToVersion(this.version, this.topicDataDefault);
+        // console.log('what is version?', this.version);
+        // return this.topicDataObjc ? this.topicDataObjc : versionedTopicDataDefault;
+        return this.topicDataObjc ? this.topicDataObjc : this.versionedTopicData;
       },
       set(data) {
         // if (dataHasVersion(data)) {
@@ -187,6 +188,9 @@ export default {
         // }
         this.topicDataDefault = data;
       },
+    },
+    versionedTopicData() {
+      return patchToVersion(this.version, this.topicDataDefault);
     },
     versionList() {
       return initializeVersionList(this.topicDataDefault);
@@ -371,9 +375,11 @@ export default {
       vm.topicData = data; // eslint-disable-line no-param-reassign
       if (to.query.version) {
         // eslint-disable-next-line no-param-reassign
-        vm.topicData = patchToVersion(to.query.version, data);
+        // vm.topicData = patchToVersion(to.query.version, data);
         // eslint-disable-next-line no-param-reassign
-        vm.topicDataDefault = data;
+        vm.version = to.query.version;
+        // eslint-disable-next-line no-param-reassign
+        // vm.topicDataDefault = data;
       }
       if (to.query.language === Language.objectiveC.key.url && vm.objcOverrides) {
         vm.applyObjcOverrides();
