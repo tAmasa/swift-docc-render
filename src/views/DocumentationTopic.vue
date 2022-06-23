@@ -36,6 +36,7 @@
       </select> -->
 
       <BaseDropdown
+      v-if ="versionList"
     v-model="version"
     aria-label="Changes Versions"
   >
@@ -152,7 +153,6 @@ export default {
   },
   mixins: [performanceMetrics, onPageLoadScrollToFragment],
   data() {
-    console.log('version', DocumentationTopicStore.state.preferredVersion);
     return {
       topicDataDefault: null,
       topicDataObjc: null,
@@ -174,12 +174,34 @@ export default {
       const objcVariant = variantOverrides.find(hasObjcTrait);
       return objcVariant ? objcVariant.patch : null;
     },
+    // version: {
+    //   get() {
+    //     if (this.versionList) {
+    //       if (this.versionList.includes(DocumentationTopicStore.state.preferredVersion)) {
+    //         return this.store.state.preferredVersion;
+    //       }
+    //     }
+    //     if (dataHasVersion(this.topicDataDefault)) {
+    //       return this.topicDataDefault.metadata.displayName;
+    //     }
+    //     return null;
+    //   },
+    //   set(data) {
+    //     console.log('hitSet', data);
+    //   },
+    // },
     topicData: {
       get() {
         // if (this.topicDataDefault === null) return null;
         // const versionedTopicDataDefault = patchToVersion(this.version, this.topicDataDefault);
         // console.log('what is version?', this.version);
         // return this.topicDataObjc ? this.topicDataObjc : versionedTopicDataDefault;
+        // if (dataHasVersion(this.topicDataDefault)) {
+        //   if (!this.versionList.includes(this.topicDataDefault.metadata.displayName)) {
+        //     // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        //     this.version = this.topicDataDefault.metadata.version.displayName;
+        //   }
+        // }
         return this.topicDataObjc ? this.topicDataObjc : this.versionedTopicData;
       },
       set(data) {
@@ -415,7 +437,6 @@ export default {
       });
     },
     version(pageVersion) {
-      console.log('versionWatcher', pageVersion);
       this.store.setPreferredVersion(pageVersion);
       // this.store.setPreferredVersion(pageVersion);
     },
