@@ -10,7 +10,7 @@
 
 <template>
   <NavMenuItemBase class="nav-menu-setting language-container">
-    <div :class="{ 'language-toggle-container': hasLanguages }">
+    <div :class="{ 'language-toggle-container': versionList }">
       <!-- Faux element to get width of select, with current element-->
       <select
         class="language-dropdown language-sizer"
@@ -21,11 +21,11 @@
         <option selected>{{ currentLanguage.name }}</option>
       </select>
       <label
-        :for="hasLanguages ? 'language-toggle' : null"
+        :for="versionList ? 'language-toggle' : null"
         class="nav-menu-setting-label"
       >Language:</label>
       <select
-        v-if="hasLanguages"
+        v-if="versionList"
         id="language-toggle"
         class="language-dropdown nav-menu-link"
         v-model="languageModel"
@@ -45,13 +45,13 @@
         class="nav-menu-toggle-none current-language"
         aria-current="page"
       >{{ currentLanguage.name }}</span>
-      <InlineChevronDownIcon v-if="hasLanguages" class="toggle-icon icon-inline" />
+      <InlineChevronDownIcon v-if="versionList" class="toggle-icon icon-inline" />
     </div>
     <div
-      v-if="hasLanguages"
+      v-if="versionList"
       class="language-list-container"
     >
-      <span class="nav-menu-setting-label">Language:</span>
+      <span class="nav-menu-setting-label">Version:</span>
       <ul class="language-list">
         <li
           v-for="language in languages"
@@ -213,7 +213,7 @@ export default {
     currentLanguage: ({ languages, languageModel }) => (
       languages.find(lang => lang.api === languageModel)
     ),
-    hasLanguages: ({ objcPath, swiftPath }) => swiftPath && objcPath,
+    versionList: ({ objcPath, swiftPath }) => swiftPath && objcPath,
   },
 };
 </script>
