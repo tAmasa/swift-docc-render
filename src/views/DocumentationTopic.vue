@@ -148,9 +148,6 @@ export default {
     CodeTheme,
     Nav: DocumentationNav,
     BaseDropdown,
-    // DropdownCustom,
-    // PrimaryDropdown,
-    // SecondaryDropdown,
   },
   mixins: [performanceMetrics, onPageLoadScrollToFragment],
   data() {
@@ -158,7 +155,7 @@ export default {
       topicDataDefault: null,
       topicDataObjc: null,
       isSideNavOpen: false,
-      version: DocumentationTopicStore.state.preferredVersion,
+      version: null,
       store: DocumentationTopicStore,
       BreakpointName,
     };
@@ -219,8 +216,10 @@ export default {
       // } else if (this.topicDataDefault) {
       //   pageVersion = this.topicDataDefault;
       // }
-      return patchToVersion(this.store.state.preferredVersion,
-        this.topicDataDefault);
+
+      return patchToVersion(this.store.state.preferredVersion, this.topicDataDefault);
+      // return patchToVersion(this.version,
+      //   this.topicDataDefault);
     },
     versionList() {
       return initializeVersionList(this.topicDataDefault);
@@ -403,11 +402,11 @@ export default {
   beforeRouteEnter(to, from, next) {
     fetchDataForRouteEnter(to, from, next).then(data => next((vm) => {
       vm.topicData = data; // eslint-disable-line no-param-reassign
+      console.log('hello!');
       if (to.query.version) {
-        // eslint-disable-next-line no-param-reassign
-        // vm.topicData = patchToVersion(to.query.version, data);
-        // eslint-disable-next-line no-param-reassign
-        vm.version = to.query.version;
+        console.log('version', vm.version);
+        vm.version = to.query.version; // eslint-disable-line no-param-reassign
+        console.log('version', vm.version);
         // eslint-disable-next-line no-param-reassign
         // vm.topicDataDefault = data;
       }

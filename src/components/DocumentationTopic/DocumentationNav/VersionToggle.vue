@@ -51,6 +51,7 @@
 </template>
 
 <script>
+import DocumentationTopicStore from 'docc-render/stores/DocumentationTopicStore';
 import { waitFrames } from 'docc-render/utils/loading';
 import Language from 'docc-render/constants/Language';
 import debounce from 'docc-render/utils/debounce';
@@ -108,7 +109,7 @@ export default {
       window.removeEventListener('resize', cb);
       window.removeEventListener('orientationchange', cb);
     });
-    this.versionModel = 'bob';
+    this.versionModel = this.currentVersion;
   },
   watch: {
     interfaceLanguage: {
@@ -207,19 +208,21 @@ export default {
         path: this.swiftPath ? this.swiftPath : this.objcPath,
       };
     },
-    // currentVersion() {
-    //   // Check if versionModel toggle is being used
-    //   if (this.versionModel) return this.versionModel;
+    currentVersion() {
+      // Check if versionModel toggle is being used
 
-    //   //Also need to set the store if its null to the most recent version
-    //   // If it hasnt been used, check the state.
-    //   if(DocumentationTopicStore.state.preferredVersion &&
-    //   this.versionList.contains(DocumentationTopicStore.state.preferredVersion)) {
-    //     return DocumentationTopicStore.state.preferredVersion;
-    //   };
-    //   // If the version doesn't exist.
-    //   return this.versionList[0];
-    // },
+      // If it hasnt been used, check the state.
+      console.log('computed', DocumentationTopicStore.state.preferredVersion);
+      if (DocumentationTopicStore.state.preferredVersion
+      && this.versionList
+      && this.versionList.includes(DocumentationTopicStore.state.preferredVersion)) {
+        console.log('you in this!');
+        return DocumentationTopicStore.state.preferredVersion;
+      }
+      // If the version doesn't exist.
+      console.log('not exiting');
+      return this.versionList[0];
+    },
     hasLanguages: ({ objcPath, swiftPath }) => swiftPath && objcPath,
   },
 };
