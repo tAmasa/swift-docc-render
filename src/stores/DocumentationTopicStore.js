@@ -33,6 +33,7 @@ export default {
     Settings.preferredLanguage = this.state.preferredLanguage;
   },
   setPreferredVersion(version) {
+    console.log('hitting this func');
     this.state.preferredVersion = version;
     Settings.preferredVersion = this.state.preferredVersion;
   },

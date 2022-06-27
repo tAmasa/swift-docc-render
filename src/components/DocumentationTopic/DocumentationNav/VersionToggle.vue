@@ -10,7 +10,7 @@
 
 <template>
   <NavMenuItemBase class="nav-menu-setting language-container">
-    <div :class="{ 'language-toggle-container': versionList }">
+    <div :class="{ 'language-toggle-container': manyVersions }">
       <!-- Faux element to get width of select, with current element-->
       <select
         class="language-dropdown language-sizer"
@@ -20,61 +20,32 @@
       >
         <option selected>{{ currentLanguage.name }}</option>
       </select>
+      <!-- Faux element is above -->
       <label
-        :for="versionList ? 'language-toggle' : null"
+        :for="versionList ? 'version-toggle' : null"
         class="nav-menu-setting-label"
-      >Language:</label>
+      >Version:</label>
       <select
-        v-if="versionList"
-        id="language-toggle"
+        v-if="versionList.length >1 "
+        id="version-toggle"
         class="language-dropdown nav-menu-link"
-        v-model="languageModel"
         :style="`width: ${adjustedWidth}px`"
-        @change="pushRoute(currentLanguage.route)"
+        v-model="versionModel"
+        @change="pushRoute(versionModel)"
       >
-        <option
-          v-for="language in languages"
-          :value="language.api"
-          :key="language.api"
-        >
-          {{ language.name }}
+         <option v-for="version in versionList"
+        v-bind:key="version"
+        :value="version">
+        {{version}}
         </option>
       </select>
+
       <span
-        v-else
+        v-else-if="singleVersionPage"
         class="nav-menu-toggle-none current-language"
         aria-current="page"
-      >{{ currentLanguage.name }}</span>
-      <InlineChevronDownIcon v-if="versionList" class="toggle-icon icon-inline" />
-    </div>
-    <div
-      v-if="versionList"
-      class="language-list-container"
-    >
-      <span class="nav-menu-setting-label">Version:</span>
-      <ul class="language-list">
-        <li
-          v-for="language in languages"
-          class="language-list-item"
-          :key="language.api"
-        >
-          <span
-            v-if="language.api === languageModel"
-            :data-language="language.api"
-            aria-current="page"
-            class="current-language"
-          >
-            {{ language.name }}
-          </span>
-          <router-link
-            v-else
-            class="nav-menu-link"
-            :to="getRoute(language.route)"
-          >
-            {{ language.name }}
-          </router-link>
-        </li>
-      </ul>
+      >{{singleVersionPage}}</span>
+      <InlineChevronDownIcon v-if="manyVersions" class="toggle-icon icon-inline" />
     </div>
   </NavMenuItemBase>
 </template>
@@ -87,13 +58,13 @@ import NavMenuItemBase from 'docc-render/components/NavMenuItemBase.vue';
 import InlineChevronDownIcon from 'theme/components/Icons/InlineChevronDownIcon.vue';
 
 export default {
-  name: 'LanguageToggle',
+  name: 'VersionToggle',
   components: { InlineChevronDownIcon, NavMenuItemBase },
   inject: {
     store: {
       default() {
         return {
-          setPreferredLanguage() {},
+          setPreferredVersion() {},
         };
       },
     },
@@ -111,11 +82,16 @@ export default {
       type: String,
       required: false,
     },
+    versionList: {
+      type: Array,
+      required: false,
+    },
   },
   data() {
     return {
       languageModel: null,
       adjustedWidth: 0,
+      versionModel: null,
     };
   },
   mounted() {
@@ -132,6 +108,7 @@ export default {
       window.removeEventListener('resize', cb);
       window.removeEventListener('orientationchange', cb);
     });
+    this.versionModel = 'bob';
   },
   watch: {
     interfaceLanguage: {
@@ -153,18 +130,21 @@ export default {
      */
     getRoute(route) {
       // pass undefined to remove the query param if its Swift
-      const language = route.query === Language.swift.key.url ? undefined : route.query;
+      const version = route.query === this.versionList[0] ? undefined : route.query;
       return {
         // make sure we dont loose any extra query params on the way
-        query: { ...this.$route.query, language },
+        query: { ...this.$route.query, version },
         path: this.isCurrentPath(route.path) ? null : this.normalizePath(route.path),
       };
     },
+    // foo(version) {
+    //   this.store.setPreferredVersion(version);
+    // },
     pushRoute(route) {
       // Persist the selected language as a preference in the store (backed by
       // the browser's local storage so that it can be retrieved later for
       // subsequent navigation without the query parameter present)
-      this.store.setPreferredLanguage(route.query);
+      this.store.setPreferredVersion(route.query);
 
       // Navigate to the language variant page
       this.$router.push(this.getRoute(route));
@@ -190,6 +170,12 @@ export default {
     },
   },
   computed: {
+    singleVersionPage() {
+      return (this.versionList && this.versionList.length === 1) ? this.versionList[0] : null;
+    },
+    manyVersions() {
+      return !this.singleVersionPage && this.versionList;
+    },
     languages() {
       return [
         {
@@ -213,7 +199,20 @@ export default {
     currentLanguage: ({ languages, languageModel }) => (
       languages.find(lang => lang.api === languageModel)
     ),
-    versionList: ({ objcPath, swiftPath }) => swiftPath && objcPath,
+    // currentVersion() {
+    //   // Check if versionModel toggle is being used
+    //   if (this.versionModel) return this.versionModel;
+
+    //   //Also need to set the store if its null to the most recent version
+    //   // If it hasnt been used, check the state.
+    //   if(DocumentationTopicStore.state.preferredVersion &&
+    //   this.versionList.contains(DocumentationTopicStore.state.preferredVersion)) {
+    //     return DocumentationTopicStore.state.preferredVersion;
+    //   };
+    //   // If the version doesn't exist.
+    //   return this.versionList[0];
+    // },
+    hasLanguages: ({ objcPath, swiftPath }) => swiftPath && objcPath,
   },
 };
 </script>

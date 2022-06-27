@@ -24,6 +24,7 @@
         :currentTopicTags="topicProps.tags"
         :references="topicProps.references"
         :isWideFormat="enableNavigator"
+        :versionList="versionList"
         @toggle-sidenav="isSideNavOpen = !isSideNavOpen"
       />
       <!-- <select
@@ -35,7 +36,7 @@
         </option>
       </select> -->
 
-      <BaseDropdown
+      <!-- <BaseDropdown
       v-if ="versionList"
     v-model="version"
     aria-label="Changes Versions"
@@ -45,7 +46,7 @@
         :value="version">
         {{version}}
         </option>
-  </BaseDropdown>
+  </BaseDropdown> -->
 
       <!-- <LanguageToggle
           v-if="interfaceLanguage && (swiftPath || objcPath)"
@@ -212,7 +213,14 @@ export default {
       },
     },
     versionedTopicData() {
-      return patchToVersion(this.version, this.topicDataDefault);
+      // var pageVersion = null;
+      // if (DocumentationTopicStore.state.preferredVersion) {
+      //   pageVersion = DocumentationTopicStore.state.preferredVersion;
+      // } else if (this.topicDataDefault) {
+      //   pageVersion = this.topicDataDefault;
+      // }
+      return patchToVersion(this.store.state.preferredVersion,
+        this.topicDataDefault);
     },
     versionList() {
       return initializeVersionList(this.topicDataDefault);

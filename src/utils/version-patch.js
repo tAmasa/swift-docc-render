@@ -35,8 +35,8 @@ function initializeVersionList(data) {
 }
 
 function patchToVersion(displayName, data) {
-  if (data === null) return null;
-
+  if (!data) return null;
+  if (!displayName) return data;
   if (!dataHasVersion(data)) return data;
 
   const patchIndex = getDiffIndex(displayName, data);
