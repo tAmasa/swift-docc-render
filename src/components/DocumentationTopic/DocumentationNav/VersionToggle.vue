@@ -18,7 +18,7 @@
         aria-hidden="true"
         tabindex="-1"
       >
-        <option selected>{{ currentLanguage.name }}</option>
+        <option selected>{{versionModel}}</option>
       </select>
       <!-- Faux element is above -->
       <label
@@ -47,6 +47,7 @@
       >{{singleVersionPage}}</span>
       <InlineChevronDownIcon v-if="manyVersions" class="toggle-icon icon-inline" />
     </div>
+
   </NavMenuItemBase>
 </template>
 
@@ -109,6 +110,8 @@ export default {
       window.removeEventListener('resize', cb);
       window.removeEventListener('orientationchange', cb);
     });
+  },
+  updated() {
     this.versionModel = this.currentVersion;
   },
   watch: {
@@ -149,7 +152,6 @@ export default {
       // Persist the selected language as a preference in the store (backed by
       // the browser's local storage so that it can be retrieved later for
       // subsequent navigation without the query parameter present)
-      console.log(' pushed this', route.query);
       this.store.setPreferredVersion(route.query);
       // Navigate to the language variant page
       this.$router.push(this.getRoute(route));
@@ -220,11 +222,9 @@ export default {
       if (DocumentationTopicStore.state.preferredVersion
       && this.versionList
       && this.versionList.includes(DocumentationTopicStore.state.preferredVersion)) {
-        console.log('you in this!');
         return DocumentationTopicStore.state.preferredVersion;
       }
       // If the version doesn't exist.
-      console.log('not exiting');
       return this.versionList[0];
     },
     hasLanguages: ({ objcPath, swiftPath }) => swiftPath && objcPath,
