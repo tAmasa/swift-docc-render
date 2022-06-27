@@ -64,6 +64,13 @@
           :objcPath="objcPath"
           :swiftPath="swiftPath"
         />
+        <VersionToggle
+          v-if="versionList"
+          :interfaceLanguage="interfaceLanguage"
+          :versionList="versionList"
+          :objcPath="objcPath"
+          :swiftPath="swiftPath"
+        />
         <slot name="menu-items" />
       </NavMenuItems>
       <slot name="tray-after" v-bind="{ breadcrumbCount }" />
@@ -81,6 +88,7 @@ import { BreakpointName } from 'docc-render/utils/breakpoints';
 import SidenavIcon from 'theme/components/Icons/SidenavIcon.vue';
 import Hierarchy from './DocumentationNav/Hierarchy.vue';
 import LanguageToggle from './DocumentationNav/LanguageToggle.vue';
+import VersionToggle from './DocumentationNav/VersionToggle.vue';
 
 export default {
   name: 'DocumentationNav',
@@ -90,6 +98,7 @@ export default {
     NavMenuItems,
     Hierarchy,
     LanguageToggle,
+    VersionToggle,
   },
   props: {
     title: {
@@ -138,6 +147,10 @@ export default {
     },
     swiftPath: {
       type: String,
+      required: false,
+    },
+    versionList: {
+      type: Array,
       required: false,
     },
   },

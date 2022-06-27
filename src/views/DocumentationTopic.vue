@@ -24,8 +24,46 @@
         :currentTopicTags="topicProps.tags"
         :references="topicProps.references"
         :isWideFormat="enableNavigator"
+        :versionList="versionList"
         @toggle-sidenav="isSideNavOpen = !isSideNavOpen"
       />
+      <!-- <select
+      v-model="version">
+        <option v-for="version in versionList"
+        v-bind:key="version"
+        :value="version">
+        {{version}}
+        </option>
+      </select> -->
+
+      <!-- <BaseDropdown
+      v-if ="versionList"
+    v-model="version"
+    aria-label="Changes Versions"
+  >
+      <option v-for="version in versionList"
+        v-bind:key="version"
+        :value="version">
+        {{version}}
+        </option>
+  </BaseDropdown> -->
+
+      <!-- <LanguageToggle
+          v-if="interfaceLanguage && (swiftPath || objcPath)"
+          :interfaceLanguage="interfaceLanguage"
+          :objcPath="objcPath"
+          :swiftPath="swiftPath"
+        /> -->
+      <!-- <DropdownCustom
+    :value="version"
+    aria-label="Current tutorial"
+    class="tutorial-dropdown"
+    isSmall
+  > </DropdownCustom>
+  <primary-dropdown :options="options" :currentOption="version">
+  ></primary-dropdown>
+  <secondary-dropdown :options="versionList" :currentOption="version">
+  ></secondary-dropdown> -->
       <component
         :is="enableNavigator ? 'AdjustableSidebarWidth' : 'div'"
         v-bind="sidebarProps"
@@ -73,6 +111,7 @@
 
 <script>
 import { apply } from 'docc-render/utils/json-patch';
+import { patchToVersion, initializeVersionList } from 'docc-render/utils/version-patch';
 import { TopicRole } from 'docc-render/constants/roles';
 import {
   clone,
@@ -92,6 +131,9 @@ import Navigator from 'docc-render/components/Navigator.vue';
 import DocumentationNav from 'theme/components/DocumentationTopic/DocumentationNav.vue';
 import { compareVersions, combineVersions } from 'docc-render/utils/schema-version-check';
 import { BreakpointName } from 'docc-render/utils/breakpoints';
+// import PrimaryDropdown from '../components/Tutorial/NavigationBar/PrimaryDropdown.vue';
+// import SecondaryDropdown from '../components/Tutorial/NavigationBar/SecondaryDropdown.vue';
+import BaseDropdown from 'docc-render/components/BaseDropdown.vue';
 
 const MIN_RENDER_JSON_VERSION_WITH_INDEX = '0.3.0';
 
@@ -105,6 +147,7 @@ export default {
     Topic: DocumentationTopic,
     CodeTheme,
     Nav: DocumentationNav,
+    BaseDropdown,
   },
   mixins: [performanceMetrics, onPageLoadScrollToFragment],
   data() {
@@ -112,6 +155,7 @@ export default {
       topicDataDefault: null,
       topicDataObjc: null,
       isSideNavOpen: false,
+      version: null,
       store: DocumentationTopicStore,
       BreakpointName,
     };
@@ -128,13 +172,57 @@ export default {
       const objcVariant = variantOverrides.find(hasObjcTrait);
       return objcVariant ? objcVariant.patch : null;
     },
+    // version: {
+    //   get() {
+    //     if (this.versionList) {
+    //       if (this.versionList.includes(DocumentationTopicStore.state.preferredVersion)) {
+    //         return this.store.state.preferredVersion;
+    //       }
+    //     }
+    //     if (dataHasVersion(this.topicDataDefault)) {
+    //       return this.topicDataDefault.metadata.displayName;
+    //     }
+    //     return null;
+    //   },
+    //   set(data) {
+    //     console.log('hitSet', data);
+    //   },
+    // },
     topicData: {
       get() {
-        return this.topicDataObjc ? this.topicDataObjc : this.topicDataDefault;
+        // if (this.topicDataDefault === null) return null;
+        // const versionedTopicDataDefault = patchToVersion(this.version, this.topicDataDefault);
+        // console.log('what is version?', this.version);
+        // return this.topicDataObjc ? this.topicDataObjc : versionedTopicDataDefault;
+        // if (dataHasVersion(this.topicDataDefault)) {
+        //   if (!this.versionList.includes(this.topicDataDefault.metadata.displayName)) {
+        //     // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        //     this.version = this.topicDataDefault.metadata.version.displayName;
+        //   }
+        // }
+        return this.topicDataObjc ? this.topicDataObjc : this.versionedTopicData;
       },
       set(data) {
+        // if (dataHasVersion(data)) {
+        //   this.version = data.metadata.version.displayName;
+        // }
         this.topicDataDefault = data;
       },
+    },
+    versionedTopicData() {
+      // var pageVersion = null;
+      // if (DocumentationTopicStore.state.preferredVersion) {
+      //   pageVersion = DocumentationTopicStore.state.preferredVersion;
+      // } else if (this.topicDataDefault) {
+      //   pageVersion = this.topicDataDefault;
+      // }
+
+      return patchToVersion(this.store.state.preferredVersion, this.topicDataDefault);
+      // return patchToVersion(this.version,
+      //   this.topicDataDefault);
+    },
+    versionList() {
+      return initializeVersionList(this.topicDataDefault);
     },
     topicKey: ({ $route, topicProps }) => [
       $route.path,
@@ -314,6 +402,14 @@ export default {
   beforeRouteEnter(to, from, next) {
     fetchDataForRouteEnter(to, from, next).then(data => next((vm) => {
       vm.topicData = data; // eslint-disable-line no-param-reassign
+      console.log('hello!');
+      if (to.query.version) {
+        console.log('version', vm.version);
+        vm.version = to.query.version; // eslint-disable-line no-param-reassign
+        console.log('version', vm.version);
+        // eslint-disable-next-line no-param-reassign
+        // vm.topicDataDefault = data;
+      }
       if (to.query.language === Language.objectiveC.key.url && vm.objcOverrides) {
         vm.applyObjcOverrides();
       }
@@ -346,6 +442,10 @@ export default {
         // Send a 'rendered' message to the host when new data has been patched onto the DOM.
         this.newContentMounted();
       });
+    },
+    version(pageVersion) {
+      this.store.setPreferredVersion(pageVersion);
+      // this.store.setPreferredVersion(pageVersion);
     },
   },
 };
