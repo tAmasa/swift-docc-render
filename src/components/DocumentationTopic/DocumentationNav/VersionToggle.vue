@@ -31,7 +31,7 @@
         class="language-dropdown nav-menu-link"
         :style="`width: ${adjustedWidth}px`"
         v-model="versionModel"
-        @change="pushRoute(versionModel)"
+        @change="pushRoute(defaultRoute)"
       >
          <option v-for="version in versionList"
         v-bind:key="version"
@@ -129,7 +129,7 @@ export default {
      * @returns {{ path: (null|string), query: { language: (string|undefined) }}}
      */
     getRoute(route) {
-      // pass undefined to remove the query param if its Swift
+      // pass undefined to remove the query param if its most recent versionl
       const version = route.query === this.versionList[0] ? undefined : route.query;
       return {
         // make sure we dont loose any extra query params on the way
@@ -144,8 +144,8 @@ export default {
       // Persist the selected language as a preference in the store (backed by
       // the browser's local storage so that it can be retrieved later for
       // subsequent navigation without the query parameter present)
+      console.log('yo pushed this', route.query);
       this.store.setPreferredVersion(route.query);
-
       // Navigate to the language variant page
       this.$router.push(this.getRoute(route));
     },
@@ -199,6 +199,14 @@ export default {
     currentLanguage: ({ languages, languageModel }) => (
       languages.find(lang => lang.api === languageModel)
     ),
+    defaultRoute() {
+      return {
+        // make sure we dont loose any extra query params on the way
+        query: this.versionModel,
+        // need to fix to get default
+        path: this.swiftPath ? this.swiftPath : this.objcPath,
+      };
+    },
     // currentVersion() {
     //   // Check if versionModel toggle is being used
     //   if (this.versionModel) return this.versionModel;
