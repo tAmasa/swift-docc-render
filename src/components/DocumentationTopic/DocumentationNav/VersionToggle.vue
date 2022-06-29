@@ -36,7 +36,7 @@
          <option v-for="version in versionList"
         v-bind:key="version"
         :value="version">
-        {{version}}
+        {{ version }}
         </option>
       </select>
 
@@ -44,10 +44,9 @@
         v-else-if="singleVersionPage"
         class="nav-menu-toggle-none current-language"
         aria-current="page"
-      >{{singleVersionPage}}</span>
+      >{{ singleVersionPage }} </span>
       <InlineChevronDownIcon v-if="manyVersions" class="toggle-icon icon-inline" />
     </div>
-
   </NavMenuItemBase>
 </template>
 
@@ -71,6 +70,8 @@ export default {
       },
     },
   },
+  // TODO: Deprecate
+
   props: {
     interfaceLanguage: {
       type: String,
@@ -91,6 +92,8 @@ export default {
   },
   data() {
     return {
+      // TODO: Deprecate
+
       languageModel: null,
       adjustedWidth: 0,
       versionModel: null,
@@ -183,6 +186,7 @@ export default {
     manyVersions() {
       return !this.singleVersionPage && this.versionList;
     },
+    // TODO: Deprecate
     languages() {
       return [
         {
@@ -203,6 +207,7 @@ export default {
         },
       ];
     },
+    // TODO: Deprecate
     currentLanguage: ({ languages, languageModel }) => (
       languages.find(lang => lang.api === languageModel)
     ),
@@ -218,7 +223,6 @@ export default {
       // Check if versionModel toggle is being used
 
       // If it hasnt been used, check the state.
-      console.log('computed', DocumentationTopicStore.state.preferredVersion);
       if (DocumentationTopicStore.state.preferredVersion
       && this.versionList
       && this.versionList.includes(DocumentationTopicStore.state.preferredVersion)) {
@@ -227,6 +231,7 @@ export default {
       // If the version doesn't exist.
       return this.versionList[0];
     },
+    // TODO: Deprecate
     hasLanguages: ({ objcPath, swiftPath }) => swiftPath && objcPath,
   },
 };

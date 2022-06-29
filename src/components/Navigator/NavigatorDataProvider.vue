@@ -11,6 +11,8 @@
 <script>
 import { fetchIndexPathsData } from 'docc-render/utils/data';
 import Language from 'docc-render/constants/Language';
+import { patchToVersion } from 'docc-render/utils/version-patch';
+import DocumentationTopicStore from 'docc-render/stores/DocumentationTopicStore';
 
 /**
  * Fetches the sidebar navigator data and provides it via a scoped slot,
@@ -41,6 +43,7 @@ export default {
         [Language.swift.key.url]: [],
       },
       diffs: null,
+      alldata: null,
     };
   },
   computed: {
@@ -49,16 +52,22 @@ export default {
       const matches = /(\/documentation\/(?:[^/]+))\/?/.exec(technology.url);
       return matches ? matches[1] : '';
     },
+    versionedNavigationIndex() {
+      const { interfaceLanguages } = patchToVersion(DocumentationTopicStore.state.preferredVersion,
+        this.alldata) || {};
+      return interfaceLanguages || this.navigationIndex;
+    },
     /**
      * Extracts the technology data, for the currently chosen language
      * @return {Object}
      */
-    technologyWithChildren({ navigationIndex, interfaceLanguage, technologyPath }) {
+    technologyWithChildren({ versionedNavigationIndex, interfaceLanguage, technologyPath }) {
       // get the technologies for the current language
-      let currentLangTechnologies = navigationIndex[interfaceLanguage] || [];
+      // eslint-disable-next-line max-len
+      let currentLangTechnologies = versionedNavigationIndex[interfaceLanguage] || [];
       // if no such items, we use the default swift one
       if (!currentLangTechnologies.length) {
-        currentLangTechnologies = navigationIndex[Language.swift.key.url] || [];
+        currentLangTechnologies = versionedNavigationIndex[Language.swift.key.url] || [];
       }
       // find the current technology
       return currentLangTechnologies.find(t => (
@@ -73,8 +82,11 @@ export default {
     async fetchIndexData() {
       try {
         this.isFetching = true;
-        const { interfaceLanguages } = await fetchIndexPathsData();
-        this.navigationIndex = Object.freeze(interfaceLanguages);
+        this.alldata = await fetchIndexPathsData();
+        // {interfaceLanguages} = this.versionedNavigationIndex
+        // TODO: Why did Dobri use a freze?
+        // this.navigationIndex = Object.freeze(interfaceLanguages);
+        // this.navigationIndex = Object.freeze(this.versionedNavigationIndex);
       } catch (e) {
         this.errorFetching = true;
       } finally {

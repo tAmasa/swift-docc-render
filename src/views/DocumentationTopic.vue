@@ -161,8 +161,8 @@ export default {
     };
   },
   computed: {
-    objcOverrides: ({ topicData }) => {
-      const { variantOverrides = [] } = topicData || {};
+    objcOverrides: ({ versionedTopicData }) => {
+      const { variantOverrides = [] } = versionedTopicData || {};
 
       const isObjcTrait = ({ interfaceLanguage }) => (
         interfaceLanguage === Language.objectiveC.key.api
@@ -216,7 +216,6 @@ export default {
       // } else if (this.topicDataDefault) {
       //   pageVersion = this.topicDataDefault;
       // }
-
       return patchToVersion(this.store.state.preferredVersion, this.topicDataDefault);
       // return patchToVersion(this.version,
       //   this.topicDataDefault);
@@ -402,11 +401,8 @@ export default {
   beforeRouteEnter(to, from, next) {
     fetchDataForRouteEnter(to, from, next).then(data => next((vm) => {
       vm.topicData = data; // eslint-disable-line no-param-reassign
-      console.log('hello!');
       if (to.query.version) {
-        console.log('version', vm.version);
         vm.version = to.query.version; // eslint-disable-line no-param-reassign
-        console.log('version', vm.version);
         // eslint-disable-next-line no-param-reassign
         // vm.topicDataDefault = data;
       }

@@ -38,7 +38,7 @@ function patchToVersion(displayName, data) {
   if (!data) return null;
   if (!displayName) return data;
   if (!dataHasVersion(data)) return data;
-
+  console.log('hasversoin', dataHasVersion(data));
   const patchIndex = getDiffIndex(displayName, data);
   if (patchIndex === -1) {
     return data;
