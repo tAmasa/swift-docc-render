@@ -43,7 +43,7 @@ export default {
         [Language.swift.key.url]: [],
       },
       diffs: null,
-      alldata: null,
+      allIndexData: null,
     };
   },
   computed: {
@@ -54,8 +54,9 @@ export default {
     },
     versionedNavigationIndex() {
       const { interfaceLanguages } = patchToVersion(DocumentationTopicStore.state.preferredVersion,
-        this.alldata) || {};
-      return interfaceLanguages || this.navigationIndex;
+        this.allIndexData) || {};
+      const preFreezedNav = interfaceLanguages || this.navigationIndex;
+      return Object.freeze(preFreezedNav);
     },
     /**
      * Extracts the technology data, for the currently chosen language
@@ -82,11 +83,10 @@ export default {
     async fetchIndexData() {
       try {
         this.isFetching = true;
-        this.alldata = await fetchIndexPathsData();
+        this.allIndexData = await fetchIndexPathsData();
         // {interfaceLanguages} = this.versionedNavigationIndex
         // TODO: Why did Dobri use a freze?
         // this.navigationIndex = Object.freeze(interfaceLanguages);
-        // this.navigationIndex = Object.freeze(this.versionedNavigationIndex);
       } catch (e) {
         this.errorFetching = true;
       } finally {
