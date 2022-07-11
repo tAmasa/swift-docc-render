@@ -11,7 +11,7 @@
 */
 
 /*
-Used to replace the fetched data for each Documentation Topic
+Used to replace the fetched data for the navigator/index.json file
 Takes an array of API objects with an version data to produce a singular key
 of change, used
 {
