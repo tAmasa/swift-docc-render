@@ -11,7 +11,7 @@
 */
 
 /*
-Used to replace the fetched data for the navigator/index.json file
+Used to replace the fetched data for each Documentation Topic
 Takes an array of API objects with an version data to produce a singular key
 of change, used
 {
@@ -91,7 +91,7 @@ Transforms it to this format:
 */
 
 /**
- * Used to replace the fetched data for each Documentation Topic
+ * Used to replace the fetched data for navigator/index.json file
  * Takes an array of API objects with an array of version data to produce an array
  * of URL keys with a value of the API changefor the given version.
  * E.g. for the "foo" object in the array with versionID "v2",
