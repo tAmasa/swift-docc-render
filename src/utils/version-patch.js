@@ -21,13 +21,15 @@ function dataHasVersion(data) {
   if (!data) return false;
   if (!('metadata' in data)) return false;
   if (!('version' in data.metadata)) return false;
-  if (!('versions' in data)) return false;
   return true;
 }
 
 function initializeVersionList(data) {
   if (dataHasVersion(data)) {
-    const versions = data.versions.map(x => x.version.displayName);
+    let versions = [];
+    if (data.versions) {
+      versions = data.versions.map(x => x.version.displayName);
+    }
     versions.unshift(data.metadata.version.displayName);
     return versions;
   }
