@@ -53,15 +53,15 @@ Transforms it to this format:
  * @param  {string} versionID
  * @returns  {JSON} An array of JSON objects with a "change" key
  */
-function versionedApiChangesDocTopic(apiChanges, versionID) {
-  const versionedAPIChanges = {};
+function generateAllURLApiChanges(apiChanges, versionID) {
+  const allURLApiChanges = {};
   Object.keys(apiChanges).forEach((url) => {
     if (apiChanges[url][versionID]) {
       const versionedUrlInfo = { change: apiChanges[url][versionID] }; // key name
-      versionedAPIChanges[url] = versionedUrlInfo;
+      allURLApiChanges[url] = versionedUrlInfo;
     }
   });
-  return versionedAPIChanges;
+  return allURLApiChanges;
 }
 
 /*
@@ -82,7 +82,7 @@ Takes an array of json pbjects in this format:
     "v1": "added",
   },
 };
-Transforms it to this format:
+Transforms it to this format for "v2"
 {
   "foo": "modified",
   "bar": "added",
@@ -101,7 +101,7 @@ Transforms it to this format:
  * @param  {string} versionID, the version of information
  * @returns  {JSON} A JSON array with URL keys and the API changes as their values.
  */
-function versionedApiChangesNavigation(apiChanges, versionID) {
+function generateAllNavigationChanges(apiChanges, versionID) {
   const versionedURLs = {};
   Object.keys(apiChanges).forEach((url) => {
     if (apiChanges[url][versionID]) {
@@ -111,6 +111,117 @@ function versionedApiChangesNavigation(apiChanges, versionID) {
   return versionedURLs;
 }
 
-// eslint-disable-next-line import/prefer-default-export
-export {
+/*
+Used to replace the navigator/interfacesLanguages data
+Takes an array of json pbjects in this format:
+{
+  "swift": {
+    "foo": {
+    "v4": "modified",
+    "v3": "modified",
+    "v2": "added",
+    },
+  "bar": {
+    "v4": "added",
+    "v2": "added",
+    "v1": "modified",
+   },
+  },
+  "occ": {
+    "foo": {
+    "v4": "modified",
+    "v3": "modified",
+    "v2": "added",
+    },
+  "bar": {
+    "v4": "added",
+    "v2": "modified",
+    "v1": "modified",
+   },
+  }
 };
+Transforms it to this format for "v2"
+{
+  "swift" :{
+    "foo": "modified",
+    "bar": "added",
+  },
+  "occ" :{
+    "foo": "modified",
+    "bar": "modified",
+  }
+}
+*/
+
+function generateAllLanguageNavigationChanges(apiChanges, versionID) {
+  const languageUrlChanges = {};
+  Object.keys(apiChanges).forEach((language) => {
+    languageUrlChanges[language] = this.generateAllNavigationChanges(apiChanges.language, versionID);
+  });
+  return languageUrlChanges;
+}
+
+/*
+transforms this
+{
+  "/documentation/fazz/boo" : {
+    change: "modified"
+  },
+   "/documentation/fazz/lala" : {
+    change: "modified"
+  },
+   "/documentation/fazz/gaga" : {
+    change: "modified"
+  }
+}
+using this data
+references :{
+  "doc://com.foo.barTech/documentation/fazz/boo": {
+  "identifier" : "doc:\/\/com.foo.barTech\/documentation\/fazz\/boo\",
+  "url" : "\/documentation\/fazz\/boo"
+  },
+  "doc://com.foo.barTech/documentation/fazz/lala": {
+  "identifier" : "doc:\/\/com.foo.barTech\/documentation\/fazz\/lala\",
+  "url" : "\/documentation\/fazz\/lala"
+  },
+}
+to this:
+{
+  {
+  "doc://com.foo.barTech/documentation/fazz/boo" : {
+    change: "modified"
+  },
+   "doc://com.foo.barTech/documentation/fazz/lala" : {
+    change: "modified"
+  },
+}
+}
+*/
+/**
+ * Used to create relevant API change file for each RenderNode in the correct format
+ * Transforms the url/path data to use the identifiers
+ * the rendernode needs for API changes based on the references data
+ * (tldr: using identifiers instead of paths/URLS)
+ * @param  {JSON} rendernode a rendernode that is used to create documentation topics or tutorials
+ * @param  {JSON} allURLApiChanges a JSON file with urlAPI changes in the correct format.
+ * !This has to be generated language dependendent!
+ * @returns {JSON} a json file with identifier objects and their respective change
+ * Also the performance is o(n^2), which may need to be optimized
+ * Need to find how to handle the '\/' in reference data
+ */
+function IdentifierAPIChangesFromURL(rendernode, allURLApiChanges) {
+  const rendernodeReferences = rendernode.references;
+  const documentationTopicApiIdentifiers = {};
+  Object.keys(allURLApiChanges).forEach((url) => {
+    Object.keys(rendernodeReferences).forEach((reference) => {
+      if (reference.url === url) {
+        const identifierApiChange = { change: allURLApiChanges[url].change };
+        documentationTopicApiIdentifiers[reference] = identifierApiChange;
+      }
+    });
+  });
+  return documentationTopicApiIdentifiers;
+}
+
+// eslint-disable-next-line import/prefer-default-export
+export {};
