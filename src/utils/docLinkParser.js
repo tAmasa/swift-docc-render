@@ -47,12 +47,12 @@ Transforms it to this format:
  * Used to replace the fetched data for each Documentation Topic
  * Takes an array of API objects with an array of version data to produce an array
  * of JSON objects with a singular key with the "change" for the given version.
- * E.g. for the "foo" object in the array with versionID "v2",
- * "foo" : { "v4": "modified", "v3": added, "v2": "modified"} turns to
- * "foo" : {"change" : "modified"}
  * @param  {JSON} apiChanges this usually is versionDifferences.swift or versionDifferences.objc found in index.json
  * @param  {string} versionID
  * @returns  {JSON} An array of JSON objects with a "change" key
+ * @example for the "foo" object in the array with versionID "v2",
+ * "foo" : { "v4": "modified", "v3": added, "v2": "modified"} turns to
+ * "foo" : {"change" : "modified"}
  */
 function generateVersionURLApiChanges(apiChanges, versionID) {
   const allURLApiChanges = {};
@@ -95,12 +95,12 @@ Transforms it to this format for "v2"
  * Used to replace the fetched data for navigator/index.json file
  * Takes an array of API objects with an array of version data to produce an array
  * of URL keys with a value of the API changefor the given version.
- * E.g. for the "foo" object in the array with versionID "v2",
- * "foo" : { "v4": "modified", "v3": added, "v2": "modified"} turns to
- * "foo" : "modified"
  * @param  {JSON} apiChanges, this usually is versionDifferences.swift or versionDifferences.objc found in index.json
  * @param  {string} versionID, the version of information
  * @returns  {JSON} A JSON array with URL keys and the API changes as their values.
+ * @example For the "foo" object in the array with versionID "v2",
+ * "foo" : { "v4": "modified", "v3": added, "v2": "modified"} turns to
+ * "foo" : "modified"
  */
 function generateVersionNavigationChanges(apiChanges, versionID) {
   const versionedURLs = {};
@@ -153,7 +153,25 @@ Transforms it to this format for "v2"
   }
 }
 */
-
+/**
+ * Transforms APIchangeDictionary to JSON object with two elements
+ * "swift" and "occ", each with a navigation key
+ * Takes an array of API objects with an array of version data to produce an array
+ * of URL keys with a value of the API changefor the given version.
+ * @param  {JSON} apiChanges
+ * @param  {string} versionID
+ * @example For the "foo" object in the array with versionID "v2",
+ * {
+ * "swift":
+ *  {"foo" : { "v4": "modified", "v3": added, "v2": "modified"} },
+ * "occ":
+ *  {"foo" : { "v4": "modified", "v3": added, "v2": "added"}},
+ * }
+ *  turns to {
+ * "swift" : {"foo" : "modified"},
+ * "occ" : {"foo" : "added"},
+ * }
+ */
 function generateLanguageNavigationChanges(apiChanges, versionID) {
   const languageUrlChanges = {};
   Object.keys(apiChanges).forEach((language) => {
@@ -194,15 +212,18 @@ to this:
 */
 /**
  * Used to create relevant API change file for each Rendernode in the correct format
- * Transforms the url/path data to use the identifiers
+ * Transforms the navigation data to use the identifiers. This is based on "path": "modified"
  * the Rendernode needs for API changes based on the references data
  * (tldr: using identifiers instead of paths/URLS)
  * @param  {JSON} Rendernode a Rendernode that is used to create documentation topics or tutorials
  * @param  {JSON} NavigationChanges a JSON file with navigation path/url changes in the correct format.
  * !This has to be generated language dependendent! e.g. NavigationChanges[preferredLanguage]
  * @returns {JSON} a json file with identifier objects and their respective change
- * Also the performance is o(n^2), which may need to be optimized
+ * @warning Also the performance is o(n^2), which may need to be optimized
  * Need to find how to handle the '\/' in reference data
+ * @example turns  "/documentation/fazz/boo" : "modified", to
+ *  "doc://com.foo.barTech/documentation/fazz/boo" : {
+ * "change": "modified"}
  */
 
 function IdentifierAPIChangesFromNavigation(Rendernode, NavigationChanges) {
@@ -257,7 +278,7 @@ to this:
 */
 /**
  * Used to create relevant API change file for each Rendernode in the correct format
- * Transforms the url/path data to use the identifiers
+ * Transforms the url/path data to use the identifiers. This is based on the format of "path" : {"change": "modified"}
  * the Rendernode needs for API changes based on the references data
  * (tldr: using identifiers instead of paths/URLS)
  * @param  {JSON} Rendernode a Rendernode that is used to create documentation topics or tutorials
