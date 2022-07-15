@@ -11,6 +11,14 @@
 */
 // Used to replace the API change fetch for navigator and documentation topics
 
+/* Terminology:
+url/path: e.g documentation/foo/bar
+identifier: doc://com.lala.gagaTech/documentation/foo/bar
+url inside of references: e.g. \/documentation\/foo\/bar
+navigation/index.json uses url/paths
+documentation topics use identifiers
+*/
+
 /*
 Used to replace the fetched data for each Documentation Topic
 Takes an array of API objects with an version data to produce a singular key
