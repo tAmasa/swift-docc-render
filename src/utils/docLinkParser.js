@@ -9,6 +9,7 @@
  * See https://swift.org/LICENSE.txt for license information
  * See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
+// Used to replace the API change fetch for navigator and documentation topics
 
 /*
 Used to replace the fetched data for each Documentation Topic
@@ -53,7 +54,7 @@ Transforms it to this format:
  * @param  {string} versionID
  * @returns  {JSON} An array of JSON objects with a "change" key
  */
-function generateAllURLApiChanges(apiChanges, versionID) {
+function generateVersionURLApiChanges(apiChanges, versionID) {
   const allURLApiChanges = {};
   Object.keys(apiChanges).forEach((url) => {
     if (apiChanges[url][versionID]) {
@@ -101,7 +102,7 @@ Transforms it to this format for "v2"
  * @param  {string} versionID, the version of information
  * @returns  {JSON} A JSON array with URL keys and the API changes as their values.
  */
-function generateAllNavigationChanges(apiChanges, versionID) {
+function generateVersionNavigationChanges(apiChanges, versionID) {
   const versionedURLs = {};
   Object.keys(apiChanges).forEach((url) => {
     if (apiChanges[url][versionID]) {
@@ -153,12 +154,69 @@ Transforms it to this format for "v2"
 }
 */
 
-function generateAllLanguageNavigationChanges(apiChanges, versionID) {
+function generateLanguageNavigationChanges(apiChanges, versionID) {
   const languageUrlChanges = {};
   Object.keys(apiChanges).forEach((language) => {
     languageUrlChanges[language] = this.generateAllNavigationChanges(apiChanges.language, versionID);
   });
   return languageUrlChanges;
+}
+
+/*
+transforms this
+{
+  "/documentation/fazz/boo" : "modified",
+  "/documentation/fazz/lala" : "modified",
+  "/documentation/fazz/gaga" : "modified"
+}
+using this data
+references :{
+  "doc://com.foo.barTech/documentation/fazz/boo": {
+  "identifier" : "doc:\/\/com.foo.barTech\/documentation\/fazz\/boo\",
+  "url" : "\/documentation\/fazz\/boo"
+  },
+  "doc://com.foo.barTech/documentation/fazz/lala": {
+  "identifier" : "doc:\/\/com.foo.barTech\/documentation\/fazz\/lala\",
+  "url" : "\/documentation\/fazz\/lala"
+  },
+}
+to this:
+{
+  {
+  "doc://com.foo.barTech/documentation/fazz/boo" : {
+    change: "modified"
+  },
+   "doc://com.foo.barTech/documentation/fazz/lala" : {
+    change: "modified"
+  },
+}
+}
+*/
+/**
+ * Used to create relevant API change file for each Rendernode in the correct format
+ * Transforms the url/path data to use the identifiers
+ * the Rendernode needs for API changes based on the references data
+ * (tldr: using identifiers instead of paths/URLS)
+ * @param  {JSON} Rendernode a Rendernode that is used to create documentation topics or tutorials
+ * @param  {JSON} NavigationChanges a JSON file with navigation path/url changes in the correct format.
+ * !This has to be generated language dependendent! e.g. NavigationChanges[preferredLanguage]
+ * @returns {JSON} a json file with identifier objects and their respective change
+ * Also the performance is o(n^2), which may need to be optimized
+ * Need to find how to handle the '\/' in reference data
+ */
+
+function IdentifierAPIChangesFromNavigation(Rendernode, NavigationChanges) {
+  const RendernodeReferences = Rendernode.references;
+  const documentationTopicApiIdentifiers = {};
+  Object.keys(NavigationChanges).forEach((path) => {
+    Object.keys(RendernodeReferences).forEach((reference) => {
+      if (reference.url === path) {
+        const identifierApiChange = { change: NavigationChanges[path] };
+        documentationTopicApiIdentifiers[reference] = identifierApiChange;
+      }
+    });
+  });
+  return documentationTopicApiIdentifiers;
 }
 
 /*
@@ -198,22 +256,22 @@ to this:
 }
 */
 /**
- * Used to create relevant API change file for each RenderNode in the correct format
+ * Used to create relevant API change file for each Rendernode in the correct format
  * Transforms the url/path data to use the identifiers
- * the rendernode needs for API changes based on the references data
+ * the Rendernode needs for API changes based on the references data
  * (tldr: using identifiers instead of paths/URLS)
- * @param  {JSON} rendernode a rendernode that is used to create documentation topics or tutorials
+ * @param  {JSON} Rendernode a Rendernode that is used to create documentation topics or tutorials
  * @param  {JSON} allURLApiChanges a JSON file with urlAPI changes in the correct format.
  * !This has to be generated language dependendent!
  * @returns {JSON} a json file with identifier objects and their respective change
  * Also the performance is o(n^2), which may need to be optimized
  * Need to find how to handle the '\/' in reference data
  */
-function IdentifierAPIChangesFromURL(rendernode, allURLApiChanges) {
-  const rendernodeReferences = rendernode.references;
+function IdentifierAPIChangesFromURL(Rendernode, allURLApiChanges) {
+  const RendernodeReferences = Rendernode.references;
   const documentationTopicApiIdentifiers = {};
   Object.keys(allURLApiChanges).forEach((url) => {
-    Object.keys(rendernodeReferences).forEach((reference) => {
+    Object.keys(RendernodeReferences).forEach((reference) => {
       if (reference.url === url) {
         const identifierApiChange = { change: allURLApiChanges[url].change };
         documentationTopicApiIdentifiers[reference] = identifierApiChange;
