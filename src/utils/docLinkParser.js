@@ -19,6 +19,12 @@ navigation/index.json uses url/paths
 documentation topics use identifiers
 */
 
+function swiftAPIChangeFormat(apiChanges) {
+  const interfacesLanguages = {};
+  interfacesLanguages.swift = apiChanges;
+  return interfacesLanguages;
+}
+
 /*
 Used to replace the fetched data for each Documentation Topic
 Takes an array of API objects with an version data to produce a singular key
@@ -117,6 +123,7 @@ function generateVersionNavigationChanges(apiChanges, versionID) {
       versionedURLs[url] = apiChanges[url][versionID];
     }
   });
+  if (!versionedURLs) return null;
   return versionedURLs;
 }
 
@@ -181,8 +188,10 @@ Transforms it to this format for "v2"
  * }
  */
 function generateLanguageNavigationChanges(apiChanges, versionID) {
+  // FIXME: Get rid of dummy clone function
+  const apiChangedummy = swiftAPIChangeFormat(apiChanges);
   const languageUrlChanges = {};
-  Object.keys(apiChanges).forEach((language) => {
+  Object.keys(apiChangedummy).forEach((language) => {
     languageUrlChanges[language] = this.generateAllNavigationChanges(apiChanges.language, versionID);
   });
   return languageUrlChanges;
@@ -311,4 +320,4 @@ function IdentifierAPIChangesFromURL(Rendernode, allURLApiChanges) {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export {};
+export { generateVersionNavigationChanges };
