@@ -24,7 +24,7 @@
       <label
         :for="versionList ? 'version-toggle' : null"
         class="nav-menu-setting-label"
-      >Version:</label>
+      >Compare To:</label>
       <select
         v-if="versionList.length >1 "
         id="version-toggle"
@@ -59,14 +59,12 @@ import NavMenuItemBase from 'docc-render/components/NavMenuItemBase.vue';
 import InlineChevronDownIcon from 'theme/components/Icons/InlineChevronDownIcon.vue';
 
 export default {
-  name: 'VersionToggle',
   components: { InlineChevronDownIcon, NavMenuItemBase },
   inject: {
     store: {
       default() {
         return {
-          setPreferredVersion() {},
-          state: { showApiChanges: false, preferredVersion: null },
+          setComparedVersion() {},
         };
       },
     },
@@ -94,7 +92,7 @@ export default {
   data() {
     return {
       // TODO: Deprecate
-      docState: this.store.state,
+
       languageModel: null,
       adjustedWidth: 0,
       versionModel: null,
@@ -117,14 +115,6 @@ export default {
   },
   updated() {
     this.versionModel = this.currentVersion;
-    if (this.docState.showAPIVersionChanges && !this.docState.preferredVersion) {
-      // console.log('foo');
-      this.store.setPreferredVersion(this.versionList[0]);
-      // this.versionModel = this.versionList[0];
-      this.pushRoute(this.versionRoute);
-    } else {
-      console.log('bar');
-    }
   },
   watch: {
     interfaceLanguage: {
@@ -150,10 +140,10 @@ export default {
      */
     getRoute(route) {
       // pass undefined to remove the query param if its most recent version
-      const version = route.query === this.versionList[0] ? undefined : route.query;
+      const compared = route.query;
       return {
         // make sure we dont loose any extra query params on the way
-        query: { ...this.$route.query, version },
+        query: { ...this.$route.query, compared },
         path: this.isCurrentPath(route.path) ? null : this.normalizePath(route.path),
       };
     },
@@ -164,7 +154,7 @@ export default {
       // Persist the selected language as a preference in the store (backed by
       // the browser's local storage so that it can be retrieved later for
       // subsequent navigation without the query parameter present)
-      this.store.setPreferredVersion(route.query);
+      this.store.setComparedVersion(route.query);
       // Navigate to the language variant page
       this.$router.push(this.getRoute(route));
     },
@@ -232,13 +222,15 @@ export default {
       // Check if versionModel toggle is being used
 
       // If it hasnt been used, check the state.
-      if (DocumentationTopicStore.state.preferredVersion
+      if (DocumentationTopicStore.state.comparedVersion
       && this.versionList
-      && this.versionList.includes(DocumentationTopicStore.state.preferredVersion)) {
-        return DocumentationTopicStore.state.preferredVersion;
+      && this.versionList.includes(DocumentationTopicStore.state.comparedVersion)) {
+        return DocumentationTopicStore.state.comparedVersion;
       }
-      // If the version doesn't exist.
       return this.versionList[0];
+      // // If the version doesn't exist.
+      // return null;'c
+      // return DocumentationTopicStore.state.comparedVersion;
     },
     // TODO: Deprecate
     hasLanguages: ({ objcPath, swiftPath }) => swiftPath && objcPath,
