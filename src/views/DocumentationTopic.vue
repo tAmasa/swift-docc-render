@@ -25,45 +25,9 @@
         :references="topicProps.references"
         :isWideFormat="enableNavigator"
         :versionList="versionList"
+        :earlierVersions = "earlierVersions"
         @toggle-sidenav="isSideNavOpen = !isSideNavOpen"
       />
-      <!-- <select
-      v-model="version">
-        <option v-for="version in versionList"
-        v-bind:key="version"
-        :value="version">
-        {{version}}
-        </option>
-      </select> -->
-
-      <!-- <BaseDropdown
-      v-if ="versionList"
-    v-model="version"
-    aria-label="Changes Versions"
-  >
-      <option v-for="version in versionList"
-        v-bind:key="version"
-        :value="version">
-        {{version}}
-        </option>
-  </BaseDropdown> -->
-
-      <!-- <LanguageToggle
-          v-if="interfaceLanguage && (swiftPath || objcPath)"
-          :interfaceLanguage="interfaceLanguage"
-          :objcPath="objcPath"
-          :swiftPath="swiftPath"
-        /> -->
-      <!-- <DropdownCustom
-    :value="version"
-    aria-label="Current tutorial"
-    class="tutorial-dropdown"
-    isSmall
-  > </DropdownCustom>
-  <primary-dropdown :options="options" :currentOption="version">
-  ></primary-dropdown>
-  <secondary-dropdown :options="versionList" :currentOption="version">
-  ></secondary-dropdown> -->
       <component
         :is="enableNavigator ? 'AdjustableSidebarWidth' : 'div'"
         v-bind="sidebarProps"
@@ -131,8 +95,6 @@ import Navigator from 'docc-render/components/Navigator.vue';
 import DocumentationNav from 'theme/components/DocumentationTopic/DocumentationNav.vue';
 import { compareVersions, combineVersions } from 'docc-render/utils/schema-version-check';
 import { BreakpointName } from 'docc-render/utils/breakpoints';
-// import PrimaryDropdown from '../components/Tutorial/NavigationBar/PrimaryDropdown.vue';
-// import SecondaryDropdown from '../components/Tutorial/NavigationBar/SecondaryDropdown.vue';
 import BaseDropdown from 'docc-render/components/BaseDropdown.vue';
 
 const MIN_RENDER_JSON_VERSION_WITH_INDEX = '0.3.0';
@@ -155,12 +117,14 @@ export default {
       topicDataDefault: null,
       topicDataObjc: null,
       isSideNavOpen: false,
-      version: null,
       store: DocumentationTopicStore,
       BreakpointName,
     };
   },
   computed: {
+    preferredVersion() {
+      return this.store.preferredVersion;
+    },
     objcOverrides: ({ versionedTopicData }) => {
       const { variantOverrides = [] } = versionedTopicData || {};
 
@@ -172,22 +136,6 @@ export default {
       const objcVariant = variantOverrides.find(hasObjcTrait);
       return objcVariant ? objcVariant.patch : null;
     },
-    // version: {
-    //   get() {
-    //     if (this.versionList) {
-    //       if (this.versionList.includes(DocumentationTopicStore.state.preferredVersion)) {
-    //         return this.store.state.preferredVersion;
-    //       }
-    //     }
-    //     if (dataHasVersion(this.topicDataDefault)) {
-    //       return this.topicDataDefault.metadata.displayName;
-    //     }
-    //     return null;
-    //   },
-    //   set(data) {
-    //     console.log('hitSet', data);
-    //   },
-    // },
     topicData: {
       get() {
         // if (this.topicDataDefault === null) return null;
@@ -222,6 +170,14 @@ export default {
     },
     versionList() {
       return initializeVersionList(this.topicDataDefault);
+    },
+    earlierVersions() {
+      let index = this.versionList.indexOf(this.store.state.preferredVersion);
+      //  This occurs when preferred version isn't set yet or doesnt exist for a current page
+      if (index === -1) return [];
+      //
+      index += 1;
+      return this.versionList.slice(index);
     },
     topicKey: ({ $route, topicProps }) => [
       $route.path,
@@ -439,9 +395,8 @@ export default {
         this.newContentMounted();
       });
     },
-    version(pageVersion) {
-      this.store.setPreferredVersion(pageVersion);
-      // this.store.setPreferredVersion(pageVersion);
+    preferredVersion() {
+      this.store.setComparedVersion(this.earlierVersions[0]);
     },
   },
 };
