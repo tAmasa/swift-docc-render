@@ -18,6 +18,8 @@ export default {
     onThisPageSections: [],
     preferredLanguage: Settings.preferredLanguage,
     preferredVersion: Settings.preferredVersion,
+    showAPIVersionChanges: Settings.showAPIVersionChanges,
+    comparedVersion: Settings.comparedVersion,
     ...changesState,
   },
   reset() {
@@ -35,6 +37,14 @@ export default {
   setPreferredVersion(version) {
     this.state.preferredVersion = version;
     Settings.preferredVersion = this.state.preferredVersion;
+  },
+  setComparedVersion(version) {
+    this.state.comparedVersion = version;
+    Settings.comparedVersion = this.state.comparedVersion;
+  },
+  setShowAPIVersionChanges(boolean) {
+    this.state.showAPIVersionChanges = boolean;
+    Settings.showAPIVersionChanges = this.state.showAPIVersionChanges;
   },
   ...changesActions,
 };

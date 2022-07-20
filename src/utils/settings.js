@@ -14,6 +14,8 @@ const StorageKey = {
   preferredColorScheme: 'developer.setting.preferredColorScheme',
   preferredLanguage: 'docs.setting.preferredLanguage',
   preferredVersion: 'docs.setting.preferredVersion',
+  comparedVersion: 'docs.setting.comparedVersion',
+  showAPIVersionChanges: 'docs.setting.showAPIVersionChanges',
 };
 
 const DeprecatedKeys = {
