@@ -71,6 +71,14 @@
           :objcPath="objcPath"
           :swiftPath="swiftPath"
         />
+        <VersionAPIToggle
+          v-if="earlierVersions.length >=1 && store.state.showAPIVersionChanges"
+          :interfaceLanguage="interfaceLanguage"
+          :versionList="earlierVersions"
+          :objcPath="objcPath"
+          :swiftPath="swiftPath"
+        />
+        <ShowApiChangesToggle/>
         <slot name="menu-items" />
       </NavMenuItems>
       <slot name="tray-after" v-bind="{ breadcrumbCount }" />
@@ -82,13 +90,16 @@
 </template>
 
 <script>
+import DocumentationTopicStore from 'docc-render/stores/DocumentationTopicStore';
 import NavBase from 'docc-render/components/NavBase.vue';
 import NavMenuItems from 'docc-render/components/NavMenuItems.vue';
 import { BreakpointName } from 'docc-render/utils/breakpoints';
 import SidenavIcon from 'theme/components/Icons/SidenavIcon.vue';
 import Hierarchy from './DocumentationNav/Hierarchy.vue';
 import LanguageToggle from './DocumentationNav/LanguageToggle.vue';
+import VersionAPIToggle from './DocumentationNav/VersionAPIToggle.vue';
 import VersionToggle from './DocumentationNav/VersionToggle.vue';
+import ShowApiChangesToggle from './DocumentationNav/ShowApiChangesToggle.vue';
 
 export default {
   name: 'DocumentationNav',
@@ -99,6 +110,13 @@ export default {
     Hierarchy,
     LanguageToggle,
     VersionToggle,
+    VersionAPIToggle,
+    ShowApiChangesToggle,
+  },
+  data() {
+    return {
+      store: DocumentationTopicStore,
+    };
   },
   props: {
     title: {
@@ -150,6 +168,10 @@ export default {
       required: false,
     },
     versionList: {
+      type: Array,
+      required: false,
+    },
+    earlierVersions: {
       type: Array,
       required: false,
     },

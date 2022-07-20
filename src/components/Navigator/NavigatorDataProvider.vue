@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 <!--
   This source file is part of the Swift.org open source project
 
@@ -13,6 +14,7 @@ import { fetchIndexPathsData } from 'docc-render/utils/data';
 import Language from 'docc-render/constants/Language';
 import { patchToVersion } from 'docc-render/utils/version-patch';
 import DocumentationTopicStore from 'docc-render/stores/DocumentationTopicStore';
+import { generateVersionNavigationChanges } from 'docc-render/utils/docLinkParser';
 
 /**
  * Fetches the sidebar navigator data and provides it via a scoped slot,
@@ -44,6 +46,11 @@ export default {
       },
       diffs: null,
       allIndexData: null,
+      dummyAPIChange: {
+        '/documentation/slothcreator/activity': 'deprecated',
+        '/documentation/slothcreator/namegenerator': 'modified',
+        '/documentation/slothcreator/foodgenerator': 'added',
+      },
     };
   },
   computed: {
@@ -52,11 +59,22 @@ export default {
       const matches = /(\/documentation\/(?:[^/]+))\/?/.exec(technology.url);
       return matches ? matches[1] : '';
     },
+    versionedIndexData() {
+      console.log('alldata', this.allIndexData);
+      return patchToVersion(DocumentationTopicStore.state.preferredVersion,
+        this.allIndexData);
+    },
     versionedNavigationIndex() {
-      const { interfaceLanguages } = patchToVersion(DocumentationTopicStore.state.preferredVersion,
-        this.allIndexData) || {};
+      const { interfaceLanguages } = this.versionedIndexData || {};
       const preFreezedNav = interfaceLanguages || this.navigationIndex;
       return Object.freeze(preFreezedNav);
+    },
+    versionedAPIChanges() {
+      if (!this.versionedIndexData) return null;
+      const changes = generateVersionNavigationChanges(this.versionedIndexData.versionDifferences,
+        DocumentationTopicStore.state.comparedVersion);
+      if (!changes || Object.keys(changes).length === 0) return null;
+      return changes;
     },
     /**
      * Extracts the technology data, for the currently chosen language
@@ -100,7 +118,7 @@ export default {
       isFetching: this.isFetching,
       errorFetching: this.errorFetching,
       isFetchingAPIChanges: this.isFetchingAPIChanges,
-      apiChanges: this.diffs,
+      apiChanges: this.versionedAPIChanges,
     });
   },
 };
