@@ -69,6 +69,7 @@ Transforms it to this format:
  * "foo" : {"change" : "modified"}
  */
 function generateVersionURLApiChanges(apiChanges, versionID) {
+  if (!versionID || !apiChanges) return null;
   const allURLApiChanges = {};
   Object.keys(apiChanges).forEach((url) => {
     if (apiChanges[url][versionID]) {
@@ -117,6 +118,7 @@ Transforms it to this format for "v2"
  * "foo" : "modified"
  */
 function generateVersionNavigationChanges(apiChanges, versionID) {
+  if (!versionID || !apiChanges) return null;
   const versionedURLs = {};
   Object.keys(apiChanges).forEach((url) => {
     if (apiChanges[url][versionID]) {
@@ -189,6 +191,7 @@ Transforms it to this format for "v2"
  */
 function generateLanguageNavigationChanges(apiChanges, versionID) {
   // FIXME: Get rid of dummy clone function
+  if (!versionID || !apiChanges) return null;
   const apiChangedummy = swiftAPIChangeFormat(apiChanges);
   const languageUrlChanges = {};
   Object.keys(apiChangedummy).forEach((language) => {
@@ -244,6 +247,7 @@ to this:
  */
 
 function IdentifierAPIChangesFromNavigation(Rendernode, NavigationChanges) {
+  if (!Rendernode || !NavigationChanges) return null;
   const RendernodeReferences = Rendernode.references;
   const documentationTopicApiIdentifiers = {};
   Object.keys(NavigationChanges).forEach((path) => {
@@ -306,6 +310,7 @@ to this:
  * Need to find how to handle the '\/' in reference data
  */
 function IdentifierAPIChangesFromURL(Rendernode, allURLApiChanges) {
+  if (!Rendernode || !allURLApiChanges) return null;
   const RendernodeReferences = Rendernode.references;
   const documentationTopicApiIdentifiers = {};
   Object.keys(allURLApiChanges).forEach((url) => {

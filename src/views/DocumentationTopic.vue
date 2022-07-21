@@ -172,6 +172,7 @@ export default {
       return initializeVersionList(this.topicDataDefault);
     },
     earlierVersions() {
+      if (!this.versionList) return [];
       let index = this.versionList.indexOf(this.store.state.preferredVersion);
       //  This occurs when preferred version isn't set yet or doesnt exist for a current page
       if (index === -1) return [];
