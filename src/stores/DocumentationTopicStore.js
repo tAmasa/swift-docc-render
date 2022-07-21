@@ -44,6 +44,9 @@ export default {
     Settings.comparedVersion = this.state.comparedVersion;
   },
   setShowAPIVersionChanges(boolean) {
+    if (!boolean) {
+      this.setComparedVersion(null);
+    }
     this.state.showAPIVersionChanges = boolean;
     Settings.showAPIVersionChanges = this.state.showAPIVersionChanges;
   },
