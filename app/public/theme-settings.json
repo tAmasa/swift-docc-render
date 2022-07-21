@@ -54,6 +54,12 @@
   },
   "features": {
     "docs": {
+      "versioning":{
+        "enable": true
+      },
+      "diffing":{
+        "enable": true
+      }
     }
   }
 }

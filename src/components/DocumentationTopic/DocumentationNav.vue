@@ -65,7 +65,7 @@
           :swiftPath="swiftPath"
         />
         <VersionToggle
-          v-if="versionList && enableVersioningDiffing"
+          v-if="versionList && enableVersioning"
           :interfaceLanguage="interfaceLanguage"
           :versionList="versionList"
           :objcPath="objcPath"
@@ -73,13 +73,13 @@
         />
         <VersionAPIToggle
           v-if="earlierVersions.length >=1 &&
-          store.state.showAPIVersionChanges && enableVersioningDiffing"
+          store.state.showAPIVersionChanges && enableVersioning && enableDiffing"
           :interfaceLanguage="interfaceLanguage"
           :versionList="earlierVersions"
           :objcPath="objcPath"
           :swiftPath="swiftPath"
         />
-        <ShowApiChangesToggle v-if="enableVersioningDiffing" />
+        <ShowApiChangesToggle v-if="enableVersioning && enableDiffing" />
         <slot name="menu-items" />
       </NavMenuItems>
       <slot name="tray-after" v-bind="{ breadcrumbCount }" />
@@ -179,8 +179,11 @@ export default {
     },
   },
   computed: {
-    enableVersioningDiffing: () => (
-      getSetting(['features', 'docs', 'versioningDiffing', 'enable'], false)
+    enableVersioning: () => (
+      getSetting(['features', 'docs', 'versioning', 'enable'], false)
+    ),
+    enableDiffing: () => (
+      getSetting(['features', 'docs', 'diffing', 'enable'], false)
     ),
     BreakpointName: () => BreakpointName,
     breadcrumbCount: ({ hierarchyItems }) => hierarchyItems.length + 1,
