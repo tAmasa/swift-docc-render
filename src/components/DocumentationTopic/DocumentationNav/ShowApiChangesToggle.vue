@@ -2,8 +2,9 @@
   <NavMenuItemBase class="nav-menu-setting language-container">
      <label>Show API Changes:  </label>
     <input
-    type="checkbox"
-    v-model="toggle"
+      type="checkbox"
+      :checked="docState.showAPIVersionChanges"
+      @input="store.setShowAPIVersionChanges($event.target.checked)"
     >
   </NavMenuItemBase>
 </template>
@@ -14,35 +15,17 @@ import NavMenuItemBase from 'docc-render/components/NavMenuItemBase.vue';
 export default {
   name: 'ShowApiChangesToggle',
   components: { NavMenuItemBase },
-  watch: {
-    toggle(newValue) {
-      this.store.setShowAPIVersionChanges(newValue);
-      if (newValue === false) {
-        this.store.setComparedVersion(null);
-      }
-    },
-  },
-  created() {
-    console.log('created', this.docState.showAPIVersionChanges);
-    this.toggle = this.docState.showAPIVersionChanges;
-  },
   data() {
     return {
       docState: this.store.state,
-      toggle: false,
     };
-  },
-  computed: {
-    currentShowApiChanges() {
-      return this.docState.showApiChanges;
-    },
   },
   inject: {
     store: {
       default() {
         return {
           setShowAPIVersionChanges() {},
-          state: { showApiChanges: false },
+          state: { showAPIVersionChanges: false },
         };
       },
     },

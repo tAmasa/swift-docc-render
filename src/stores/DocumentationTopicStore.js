@@ -18,7 +18,8 @@ export default {
     onThisPageSections: [],
     preferredLanguage: Settings.preferredLanguage,
     preferredVersion: Settings.preferredVersion,
-    showAPIVersionChanges: Settings.showAPIVersionChanges,
+    // convert string value into boolean
+    showAPIVersionChanges: Settings.showAPIVersionChanges === 'true',
     comparedVersion: Settings.comparedVersion,
     ...changesState,
   },
