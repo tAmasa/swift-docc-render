@@ -65,20 +65,21 @@
           :swiftPath="swiftPath"
         />
         <VersionToggle
-          v-if="versionList"
+          v-if="versionList && enableVersioningDiffing"
           :interfaceLanguage="interfaceLanguage"
           :versionList="versionList"
           :objcPath="objcPath"
           :swiftPath="swiftPath"
         />
         <VersionAPIToggle
-          v-if="earlierVersions.length >=1 && store.state.showAPIVersionChanges"
+          v-if="earlierVersions.length >=1 &&
+          store.state.showAPIVersionChanges && enableVersioningDiffing"
           :interfaceLanguage="interfaceLanguage"
           :versionList="earlierVersions"
           :objcPath="objcPath"
           :swiftPath="swiftPath"
         />
-        <ShowApiChangesToggle/>
+        <ShowApiChangesToggle v-if="enableVersioningDiffing" />
         <slot name="menu-items" />
       </NavMenuItems>
       <slot name="tray-after" v-bind="{ breadcrumbCount }" />
@@ -95,6 +96,7 @@ import NavBase from 'docc-render/components/NavBase.vue';
 import NavMenuItems from 'docc-render/components/NavMenuItems.vue';
 import { BreakpointName } from 'docc-render/utils/breakpoints';
 import SidenavIcon from 'theme/components/Icons/SidenavIcon.vue';
+import { getSetting } from 'docc-render/utils/theme-settings';
 import Hierarchy from './DocumentationNav/Hierarchy.vue';
 import LanguageToggle from './DocumentationNav/LanguageToggle.vue';
 import VersionAPIToggle from './DocumentationNav/VersionAPIToggle.vue';
@@ -177,6 +179,9 @@ export default {
     },
   },
   computed: {
+    enableVersioningDiffing: () => (
+      getSetting(['features', 'docs', 'versioningDiffing', 'enable'], false)
+    ),
     BreakpointName: () => BreakpointName,
     breadcrumbCount: ({ hierarchyItems }) => hierarchyItems.length + 1,
     /**
