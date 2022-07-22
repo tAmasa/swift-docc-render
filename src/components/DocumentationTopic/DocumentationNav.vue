@@ -187,10 +187,12 @@ export default {
       return this.store.state.preferredVersion;
     },
     enableVersioning: () => (
-      getSetting(['features', 'docs', 'versioning', 'enable'], false)
+      // FIXME:  Change this to be false lol
+      getSetting(['features', 'docs', 'versioning', 'enable'], true)
     ),
     enableDiffing: () => (
-      getSetting(['features', 'docs', 'diffing', 'enable'], false)
+      // FIXME:  Change this to be false lol
+      getSetting(['features', 'docs', 'diffing', 'enable'], true)
     ),
     BreakpointName: () => BreakpointName,
     breadcrumbCount: ({ hierarchyItems }) => hierarchyItems.length + 1,
@@ -236,9 +238,7 @@ export default {
     },
     preferredVersion() {
       if (this.versionList) {
-        console.log('foo');
         if (this.preferredVersion === this.versionList[this.versionList.length - 1]) {
-          console.log('bar');
           this.store.setShowAPIVersionChanges(false);
         }
       }
