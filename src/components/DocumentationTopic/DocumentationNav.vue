@@ -79,7 +79,7 @@
           :objcPath="objcPath"
           :swiftPath="swiftPath"
         />
-        <ShowApiChangesToggle v-if="versionList && versionList.length >=2
+        <ShowApiChangesToggle v-if="versionList.length >=2
           && enableVersioning && enableDiffing" />
         <slot name="menu-items" />
       </NavMenuItems>
