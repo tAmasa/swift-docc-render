@@ -26,7 +26,7 @@
         class="nav-menu-setting-label"
       >Version:</label>
       <select
-        v-if="versionList.length >1 "
+        v-if="versionList && versionList.length >1 "
         id="version-toggle"
         class="language-dropdown nav-menu-link"
         :style="`width: ${adjustedWidth}px`"
