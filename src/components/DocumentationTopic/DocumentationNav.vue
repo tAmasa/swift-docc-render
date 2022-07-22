@@ -72,7 +72,7 @@
           :swiftPath="swiftPath"
         />
         <VersionAPIToggle
-          v-if="earlierVersions &&
+          v-if="earlierVersions && earlierVersions.length >=1 &&
           store.state.showAPIVersionChanges && enableVersioning && enableDiffing"
           :interfaceLanguage="interfaceLanguage"
           :versionList="earlierVersions"
@@ -183,6 +183,9 @@ export default {
     showAPIVersionChanges() {
       return this.store.state.showAPIVersionChanges;
     },
+    preferredVersion() {
+      return this.store.state.preferredVersion;
+    },
     enableVersioning: () => (
       getSetting(['features', 'docs', 'versioning', 'enable'], false)
     ),
@@ -228,6 +231,15 @@ export default {
       if (this.showAPIVersionChanges) {
         if (this.versionList) {
           this.store.setPreferredVersion(this.versionList[0]);
+        }
+      }
+    },
+    preferredVersion() {
+      if (this.versionList) {
+        console.log('foo');
+        if (this.preferredVersion === this.versionList[this.versionList.length - 1]) {
+          console.log('bar');
+          this.store.setShowAPIVersionChanges(false);
         }
       }
     },
