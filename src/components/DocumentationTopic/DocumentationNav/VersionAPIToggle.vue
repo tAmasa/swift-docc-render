@@ -25,14 +25,16 @@
         :for="versionList ? 'version-toggle' : null"
         class="nav-menu-setting-label"
       >Compare To:</label>
+      <!-- // FIXME: Get versionList.length>1 -->
       <select
-        v-if="versionList.length >1 "
+        v-if="versionList"
         id="version-toggle"
         class="language-dropdown nav-menu-link"
         :style="`width: ${adjustedWidth}px`"
         v-model="versionModel"
         @change="pushRoute(versionRoute)"
       >
+        <option disabled selected value> -- select a version -- </option>
          <option v-for="version in versionList"
         v-bind:key="version"
         :value="version">
@@ -180,7 +182,14 @@ export default {
   },
   computed: {
     singleVersionPage() {
-      return (this.versionList && this.versionList.length === 1) ? this.versionList[0] : null;
+      const single = (this.versionList && this.versionList.length === 1)
+        ? this.versionList[0] : null;
+      if (single) {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.versionModel = single;
+        this.pushRoute(this.versionRoute);
+      }
+      return single;
     },
     manyVersions() {
       return !this.singleVersionPage && this.versionList;

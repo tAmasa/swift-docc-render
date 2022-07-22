@@ -72,14 +72,15 @@
           :swiftPath="swiftPath"
         />
         <VersionAPIToggle
-          v-if="earlierVersions.length >=1 &&
+          v-if="earlierVersions &&
           store.state.showAPIVersionChanges && enableVersioning && enableDiffing"
           :interfaceLanguage="interfaceLanguage"
           :versionList="earlierVersions"
           :objcPath="objcPath"
           :swiftPath="swiftPath"
         />
-        <ShowApiChangesToggle v-if="enableVersioning && enableDiffing" />
+        <ShowApiChangesToggle v-if="versionList && versionList.length >=2
+          && enableVersioning && enableDiffing" />
         <slot name="menu-items" />
       </NavMenuItems>
       <slot name="tray-after" v-bind="{ breadcrumbCount }" />
@@ -179,6 +180,9 @@ export default {
     },
   },
   computed: {
+    showAPIVersionChanges() {
+      return this.store.state.showAPIVersionChanges;
+    },
     enableVersioning: () => (
       getSetting(['features', 'docs', 'versioning', 'enable'], false)
     ),
@@ -218,6 +222,15 @@ export default {
     hierarchyItems: ({ parentTopicIdentifiers, isRootTechnologyLink }) => (
       isRootTechnologyLink ? parentTopicIdentifiers.slice(1) : parentTopicIdentifiers
     ),
+  },
+  watch: {
+    showAPIVersionChanges() {
+      if (this.showAPIVersionChanges) {
+        if (this.versionList) {
+          this.store.setPreferredVersion(this.versionList[0]);
+        }
+      }
+    },
   },
   methods: {
     async handleSidenavToggle(closeNav) {
