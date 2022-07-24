@@ -82,6 +82,7 @@ import {
   fetchDataForRouteEnter,
   shouldFetchDataForRouteUpdate,
 } from 'docc-render/utils/data';
+import { IdentifierAPIChangesFromNavigation } from 'docc-render/utils/docLinkParser';
 import DocumentationTopic from 'theme/components/DocumentationTopic.vue';
 import DocumentationTopicStore from 'docc-render/stores/DocumentationTopicStore';
 import CodeTheme from 'docc-render/components/Tutorial/CodeTheme.vue';
@@ -169,12 +170,20 @@ export default {
       //   this.topicDataDefault);
     },
     versionList() {
+      console.log(this.pageVersionAPIChanges);
       return initializeVersionList(this.topicDataDefault);
+    },
+    pageVersionAPIChanges() {
+      const pageReferences = this.topicData.references;
+      const identifierChanges = IdentifierAPIChangesFromNavigation(pageReferences,
+        this.store.state.navigatorAPIChanges);
+      this.store.setAPIChanges(identifierChanges);
+      return identifierChanges;
     },
     earlierVersions() {
       if (!this.versionList) return [];
       let index = this.versionList.indexOf(this.store.state.preferredVersion);
-      //  This occurs when preferred version isn't set yet or doesnt exist for a current page
+      //  This occurs when preferred version isn't set yet or dpoesnt exist for a current page
       if (index === -1) return [];
       //
       index += 1;
