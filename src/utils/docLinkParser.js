@@ -235,7 +235,7 @@ to this:
  * Transforms the navigation data to use the identifiers. This is based on "path": "modified"
  * the Rendernode needs for API changes based on the references data
  * (tldr: using identifiers instead of paths/URLS)
- * @param  {JSON} Rendernode a Rendernode that is used to create documentation topics or tutorials
+ * @param  {JSON} references references in a Rendernode that is used to create documentation topics or tutorials
  * @param  {JSON} NavigationChanges a JSON file with navigation path/url changes in the correct format.
  * !This has to be generated language dependendent! e.g. NavigationChanges[preferredLanguage]
  * @returns {JSON} a json file with identifier objects and their respective change
@@ -246,18 +246,20 @@ to this:
  * "change": "modified"}
  */
 
-function IdentifierAPIChangesFromNavigation(Rendernode, NavigationChanges) {
-  if (!Rendernode || !NavigationChanges) return null;
-  const RendernodeReferences = Rendernode.references;
+function IdentifierAPIChangesFromNavigation(references, NavigationChanges) {
+  if (!references || !NavigationChanges) return null;
+  const RendernodeReferences = references;
   const documentationTopicApiIdentifiers = {};
   Object.keys(NavigationChanges).forEach((path) => {
     Object.keys(RendernodeReferences).forEach((reference) => {
-      if (reference.url === path) {
+      if (RendernodeReferences[reference].url === path) {
         const identifierApiChange = { change: NavigationChanges[path] };
         documentationTopicApiIdentifiers[reference] = identifierApiChange;
       }
     });
   });
+  if (!documentationTopicApiIdentifiers
+    || documentationTopicApiIdentifiers === {}) return null;
   return documentationTopicApiIdentifiers;
 }
 
@@ -325,4 +327,4 @@ function IdentifierAPIChangesFromURL(Rendernode, allURLApiChanges) {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export { generateVersionNavigationChanges };
+export { generateVersionNavigationChanges, IdentifierAPIChangesFromNavigation };
