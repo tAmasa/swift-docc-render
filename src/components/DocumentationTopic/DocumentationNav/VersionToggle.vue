@@ -118,12 +118,8 @@ export default {
   updated() {
     this.versionModel = this.currentVersion;
     if (this.docState.showAPIVersionChanges && !this.docState.preferredVersion) {
-      // console.log('foo');
       this.store.setPreferredVersion(this.versionList[0]);
-      // this.versionModel = this.versionList[0];
       this.pushRoute(this.versionRoute);
-    } else {
-      console.log('bar');
     }
   },
   watch: {
