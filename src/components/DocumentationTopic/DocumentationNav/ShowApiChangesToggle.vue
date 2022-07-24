@@ -1,11 +1,15 @@
 <template>
   <NavMenuItemBase class="nav-menu-setting language-container">
-     <label>Show API Changes:  </label>
+     <label>Show API Changes:  &nbsp; </label>
+    <label class="toggle">
     <input
+      class="toggle__input"
       type="checkbox"
       :checked="docState.showAPIVersionChanges"
       @input="store.setShowAPIVersionChanges($event.target.checked)"
     >
+    <div class="toggle__fill"></div>
+    </label>
   </NavMenuItemBase>
 </template>
 
@@ -39,6 +43,49 @@ export default {
 
 $dropdown-icon-padding: 11px;
 $nav-menu-toggle-label-margin: 6px;
+
+.toggle {
+  --width: 30px;
+  --height: calc(var(--width) / 2);
+  --border-radius: calc(var(--height) / 2);
+
+  display: inline-block;
+  cursor: pointer;
+}
+
+.toggle__input {
+  display: none;
+}
+
+.toggle__fill {
+  position: relative;
+  width: var(--width);
+  height: var(--height);
+  border-radius: var(--border-radius);
+  background: #dddddd;
+  transition: background 0.2s;
+}
+
+.toggle__input:checked ~ .toggle__fill {
+  background: #4ED164;
+}
+
+.toggle__fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: var(--height);
+  width: var(--height);
+  background: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  border-radius: var(--border-radius);
+  transition: transform 0.2s;
+}
+
+.toggle__input:checked ~ .toggle__fill::after {
+  transform: translateX(var(--height));
+}
 
 .nav-menu-setting-label {
   margin-right: $nav-menu-label-margin;
