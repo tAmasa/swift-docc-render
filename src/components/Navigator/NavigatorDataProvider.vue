@@ -14,6 +14,7 @@ import { fetchIndexPathsData } from 'docc-render/utils/data';
 import Language from 'docc-render/constants/Language';
 import { patchToVersion } from 'docc-render/utils/version-patch';
 import DocumentationTopicStore from 'docc-render/stores/DocumentationTopicStore';
+import ApiChangesStoreBase from 'docc-render/stores/ApiChangesStoreBase';
 import { generateVersionNavigationChanges } from 'docc-render/utils/docLinkParser';
 
 /**
@@ -46,11 +47,6 @@ export default {
       },
       diffs: null,
       allIndexData: null,
-      dummyAPIChange: {
-        '/documentation/slothcreator/activity': 'deprecated',
-        '/documentation/slothcreator/namegenerator': 'modified',
-        '/documentation/slothcreator/foodgenerator': 'added',
-      },
     };
   },
   computed: {
@@ -74,6 +70,8 @@ export default {
       const changes = generateVersionNavigationChanges(this.versionedIndexData.versionDifferences,
         DocumentationTopicStore.state.comparedVersion);
       if (!changes || Object.keys(changes).length === 0) return null;
+      ApiChangesStoreBase.setNavigatorAPIChanges(changes);
+      // console.log('navigator', ApiChangesStoreBase.state.navigatorAPIChanges);
       return changes;
     },
     /**

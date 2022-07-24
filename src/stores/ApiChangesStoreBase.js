@@ -24,9 +24,13 @@ export const apiChangesCountsFactory = () => ({
 
 export default {
   state: {
+    navigatorAPIChanges: null,
     apiChanges: null,
     apiChangesCounts: apiChangesCountsFactory(),
     selectedAPIChangesVersion: null,
+  },
+  setNavigatorAPIChanges(changes) {
+    this.state.navigatorAPIChanges = changes;
   },
   setAPIChanges(changes) {
     this.state.apiChanges = changes;
@@ -37,6 +41,7 @@ export default {
   // Reset the API changes data, except for the `selectedAPIChangesVersion`.
   // This method is called primarily on page navigation, to clear old changes data.
   resetApiChanges() {
+    this.state.navigatorAPIChanges = null;
     this.state.apiChanges = null;
     this.state.apiChangesCounts = apiChangesCountsFactory();
   },
