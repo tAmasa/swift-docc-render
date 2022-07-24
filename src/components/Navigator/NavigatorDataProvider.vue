@@ -55,7 +55,6 @@ export default {
       return matches ? matches[1] : '';
     },
     versionedIndexData() {
-      console.log('alldata', this.allIndexData);
       return patchToVersion(DocumentationTopicStore.state.preferredVersion,
         this.allIndexData);
     },
