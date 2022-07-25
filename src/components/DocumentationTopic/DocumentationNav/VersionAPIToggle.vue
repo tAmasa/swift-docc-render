@@ -116,7 +116,11 @@ export default {
     });
   },
   updated() {
-    this.versionModel = this.currentVersion;
+    if (DocumentationTopicStore.store.showAPIVersionChanges) {
+      this.versionModel = this.currentVersion;
+    } else {
+      this.versionModel = undefined;
+    }
   },
   watch: {
     interfaceLanguage: {
@@ -133,6 +137,12 @@ export default {
       immediate: true,
       handler: 'calculateSelectWidth',
     },
+    showApiVersionChanges() {
+      if (!this.showApiVersionChanges) {
+        this.versionModel = undefined;
+        this.pushRoute(this.versionRoute);
+      }
+    },
   },
   methods: {
     /**
@@ -142,7 +152,8 @@ export default {
      */
     getRoute(route) {
       // pass undefined to remove the query param if its most recent version
-      const compared = route.query;
+      const compared = this.showApiVersionChanges ? route.query : undefined;
+      // const compared = route.query;
       return {
         // make sure we dont loose any extra query params on the way
         query: { ...this.$route.query, compared },
@@ -181,6 +192,9 @@ export default {
     },
   },
   computed: {
+    showApiVersionChanges() {
+      return DocumentationTopicStore.store.showAPIVersionChanges;
+    },
     singleVersionPage() {
       const single = (this.versionList && this.versionList.length === 1)
         ? this.versionList[0] : null;
