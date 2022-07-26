@@ -24,7 +24,6 @@ export const apiChangesCountsFactory = () => ({
 
 export default {
   state: {
-    navigatorAPIChanges: null,
     apiChanges: null,
     apiChangesCounts: apiChangesCountsFactory(),
     selectedAPIChangesVersion: null,
