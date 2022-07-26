@@ -170,7 +170,9 @@ export default {
       //   this.topicDataDefault);
     },
     versionList() {
-      console.log(this.pageVersionAPIChanges);
+      // console.log(this.pageVersionAPIChanges);
+      this.calcuateReferenceDiffs();
+      // console.log(this.pageVersionAPIChanges);
       return initializeVersionList(this.topicDataDefault);
     },
     pageVersionAPIChanges() {
@@ -179,6 +181,7 @@ export default {
         this.store.state.navigatorAPIChanges);
       this.store.setAPIChanges(identifierChanges);
       return identifierChanges;
+      // return -1;
     },
     earlierVersions() {
       if (!this.versionList) return [];
@@ -341,6 +344,17 @@ export default {
     },
     handleCodeColorsChange(codeColors) {
       CodeThemeStore.updateCodeColors(codeColors);
+    },
+    calcuateReferenceDiffs() {
+      console.log('fun hit');
+      console.log('a', this.store.state.navigatorAPIChanges);
+      console.log('b', this.topicData.references);
+      const pageReferences = this.topicData.references;
+      const identifierChanges = IdentifierAPIChangesFromNavigation(pageReferences,
+        DocumentationTopicStore.state.navigatorAPIChanges);
+      DocumentationTopicStore.setAPIChanges(identifierChanges);
+      console.log('ident', identifierChanges);
+      // return identifierChanges;
     },
   },
   mounted() {
