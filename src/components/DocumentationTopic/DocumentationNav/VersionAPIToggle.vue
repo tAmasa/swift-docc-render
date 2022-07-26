@@ -67,6 +67,7 @@ export default {
       default() {
         return {
           setComparedVersion() {},
+          state: { showAPIVersionChanges: false },
         };
       },
     },
@@ -116,11 +117,7 @@ export default {
     });
   },
   updated() {
-    if (DocumentationTopicStore.store.showAPIVersionChanges) {
-      this.versionModel = this.currentVersion;
-    } else {
-      this.versionModel = undefined;
-    }
+    this.versionModel = this.currentVersion;
   },
   watch: {
     interfaceLanguage: {
@@ -137,9 +134,8 @@ export default {
       immediate: true,
       handler: 'calculateSelectWidth',
     },
-    showApiVersionChanges() {
-      if (!this.showApiVersionChanges) {
-        this.versionModel = undefined;
+    showAPIVersionChanges() {
+      if (!this.showAPIVersionChanges) {
         this.pushRoute(this.versionRoute);
       }
     },
@@ -153,6 +149,8 @@ export default {
     getRoute(route) {
       // pass undefined to remove the query param if its most recent version
       const compared = this.showApiVersionChanges ? route.query : undefined;
+      console.log('compared', this.showApiVersionChanges, compared);
+      // console.log('compared', compared);
       // const compared = route.query;
       return {
         // make sure we dont loose any extra query params on the way
@@ -193,7 +191,7 @@ export default {
   },
   computed: {
     showApiVersionChanges() {
-      return DocumentationTopicStore.store.showAPIVersionChanges;
+      return this.store.state.showAPIVersionChanges;
     },
     singleVersionPage() {
       const single = (this.versionList && this.versionList.length === 1)
