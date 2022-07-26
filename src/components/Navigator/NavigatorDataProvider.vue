@@ -65,9 +65,11 @@ export default {
     },
     versionedAPIChanges() {
       if (!this.versionedIndexData) return null;
-      const changes = generateVersionNavigationChanges(this.versionedIndexData.versionDifferences,
+      let changes = generateVersionNavigationChanges(this.versionedIndexData.versionDifferences,
         DocumentationTopicStore.state.comparedVersion);
-      if (!changes || Object.keys(changes).length === 0) return null;
+      if (!changes || Object.keys(changes).length === 0) {
+        changes = null;
+      }
       DocumentationTopicStore.setNavigatorAPIChanges(changes);
       return changes;
     },
