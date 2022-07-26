@@ -41,7 +41,7 @@ export default {
   // Reset the API changes data, except for the `selectedAPIChangesVersion`.
   // This method is called primarily on page navigation, to clear old changes data.
   resetApiChanges() {
-    this.state.navigatorAPIChanges = null;
+    // this.state.navigatorAPIChanges = null;
     this.state.apiChanges = null;
     this.state.apiChangesCounts = apiChangesCountsFactory();
   },

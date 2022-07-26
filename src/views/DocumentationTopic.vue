@@ -171,18 +171,18 @@ export default {
     },
     versionList() {
       // console.log(this.pageVersionAPIChanges);
-      this.calcuateReferenceDiffs();
+      // this.calcuateReferenceDiffs();
       // console.log(this.pageVersionAPIChanges);
       return initializeVersionList(this.topicDataDefault);
     },
-    pageVersionAPIChanges() {
-      const pageReferences = this.topicData.references;
-      const identifierChanges = IdentifierAPIChangesFromNavigation(pageReferences,
-        this.store.state.navigatorAPIChanges);
-      this.store.setAPIChanges(identifierChanges);
-      return identifierChanges;
-      // return -1;
-    },
+    // pageVersionAPIChanges() {
+    //   const pageReferences = this.topicData.references;
+    //   const identifierChanges = IdentifierAPIChangesFromNavigation(pageReferences,
+    //     this.store.state.navigatorAPIChanges);
+    //   this.store.setAPIChanges(identifierChanges);
+    //   return identifierChanges;
+    //   // return -1;
+    // },
     earlierVersions() {
       if (!this.versionList) return [];
       let index = this.versionList.indexOf(this.store.state.preferredVersion);
@@ -346,18 +346,24 @@ export default {
       CodeThemeStore.updateCodeColors(codeColors);
     },
     calcuateReferenceDiffs() {
-      console.log('fun hit');
-      console.log('a', this.store.state.navigatorAPIChanges);
-      console.log('b', this.topicData.references);
+      // console.log('fun hit');
+      // console.log('a', this.store.state.navigatorAPIChanges);
+      // console.log('b', this.topicData.references);
       const pageReferences = this.topicData.references;
       const identifierChanges = IdentifierAPIChangesFromNavigation(pageReferences,
         DocumentationTopicStore.state.navigatorAPIChanges);
       DocumentationTopicStore.setAPIChanges(identifierChanges);
-      console.log('ident', identifierChanges);
+      // console.log('ident', identifierChanges);
       // return identifierChanges;
     },
   },
+  updated() {
+    // console.log('updated', this.store.state.navigatorAPIChanges);
+    // console.log('pref', this.store.state.preferredVersion);
+    this.calcuateReferenceDiffs();
+  },
   mounted() {
+    // this.calcuateReferenceDiffs();
     this.$bridge.on('contentUpdate', (data) => {
       this.topicData = data;
     });
