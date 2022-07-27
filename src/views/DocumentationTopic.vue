@@ -39,6 +39,7 @@
               :interface-language="topicProps.interfaceLanguage"
               :technology="technology"
               :api-changes-version="store.state.selectedAPIChangesVersion"
+              @setNavigatorAPIChanges="initializeAPIData"
             >
               <template #default="slotProps">
                 <transition name="delay-hiding">
@@ -124,8 +125,11 @@ export default {
   },
   computed: {
     preferredVersion() {
-      return this.store.preferredVersion;
+      return this.store.state.preferredVersion;
     },
+    // navigatorAPIChanges() {
+    //   return DocumentationTopicStore.state.navigatorAPIChanges;
+    // },
     objcOverrides: ({ versionedTopicData }) => {
       const { variantOverrides = [] } = versionedTopicData || {};
 
@@ -149,6 +153,7 @@ export default {
         //     this.version = this.topicDataDefault.metadata.version.displayName;
         //   }
         // }
+        // this.calculateReferenceDiffs();
         return this.topicDataObjc ? this.topicDataObjc : this.versionedTopicData;
       },
       set(data) {
@@ -166,13 +171,8 @@ export default {
       //   pageVersion = this.topicDataDefault;
       // }
       return patchToVersion(this.store.state.preferredVersion, this.topicDataDefault);
-      // return patchToVersion(this.version,
-      //   this.topicDataDefault);
     },
     versionList() {
-      // console.log(this.pageVersionAPIChanges);
-      // this.calcuateReferenceDiffs();
-      // console.log(this.pageVersionAPIChanges);
       return initializeVersionList(this.topicDataDefault);
     },
     // pageVersionAPIChanges() {
@@ -345,10 +345,24 @@ export default {
     handleCodeColorsChange(codeColors) {
       CodeThemeStore.updateCodeColors(codeColors);
     },
-    calcuateReferenceDiffs() {
+    initializeAPIData(changes) {
+      this.store.setNavigatorAPIChanges(changes);
+      this.calculateReferenceDiffs();
+    },
+    /**
+     * Initializes the API diffs for a specific rendernode by finding the path API changes
+     * in the navigator and checking for matches in the references for a file
+     * @yields page ref
+     */
+    calculateReferenceDiffs() {
       // console.log('fun hit');
       // console.log('a', this.store.state.navigatorAPIChanges);
       // console.log('b', this.topicData.references);
+      // console.log('hitting func');
+      if (!this.topicData) {
+        // console.log('topicdata not set');
+        return;
+      }
       const pageReferences = this.topicData.references;
       const identifierChanges = IdentifierAPIChangesFromNavigation(pageReferences,
         DocumentationTopicStore.state.navigatorAPIChanges);
@@ -357,13 +371,7 @@ export default {
       // return identifierChanges;
     },
   },
-  updated() {
-    // console.log('updated', this.store.state.navigatorAPIChanges);
-    // console.log('pref', this.store.state.preferredVersion);
-    this.calcuateReferenceDiffs();
-  },
   mounted() {
-    // this.calcuateReferenceDiffs();
     this.$bridge.on('contentUpdate', (data) => {
       this.topicData = data;
     });

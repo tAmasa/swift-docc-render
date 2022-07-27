@@ -64,13 +64,17 @@ export default {
       return Object.freeze(preFreezedNav);
     },
     versionedAPIChanges() {
+      // console.log('versioned API change func hit');
+      // console.log('init', DocumentationTopicStore.state.navigatorAPIChanges);
       if (!this.versionedIndexData) return null;
       let changes = generateVersionNavigationChanges(this.versionedIndexData.versionDifferences,
         DocumentationTopicStore.state.comparedVersion);
       if (!changes || Object.keys(changes).length === 0) {
         changes = null;
       }
-      DocumentationTopicStore.setNavigatorAPIChanges(changes);
+      // DocumentationTopicStore.setNavigatorAPIChanges(changes);
+      this.$emit('setNavigatorAPIChanges', changes);
+      // console.log('foo', DocumentationTopicStore.state.navigatorAPIChanges);
       return changes;
     },
     /**
