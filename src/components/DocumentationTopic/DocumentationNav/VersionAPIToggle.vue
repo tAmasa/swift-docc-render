@@ -149,7 +149,7 @@ export default {
     getRoute(route) {
       // pass undefined to remove the query param if its most recent version
       const compared = this.showApiVersionChanges ? route.query : undefined;
-      console.log('compared', this.showApiVersionChanges, compared);
+      // console.log('compared', this.showApiVersionChanges, compared);
       // console.log('compared', compared);
       // const compared = route.query;
       return {
@@ -167,7 +167,8 @@ export default {
       // subsequent navigation without the query parameter present)
       this.store.setComparedVersion(route.query);
       // Navigate to the language variant page
-      this.$router.push(this.getRoute(route));
+      // FIXME: Fix the rotuer being pushed
+      // this.$router.push(this.getRoute(route));
     },
     isCurrentPath(path) {
       // the `.replace` call is needed since paths vended by the backend do not
