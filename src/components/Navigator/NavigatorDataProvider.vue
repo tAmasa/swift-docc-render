@@ -73,9 +73,12 @@ export default {
         changes = null;
       }
       // DocumentationTopicStore.setNavigatorAPIChanges(changes);
-      this.$emit('setNavigatorAPIChanges', changes);
       // console.log('foo', DocumentationTopicStore.state.navigatorAPIChanges);
-      return changes;
+      if (DocumentationTopicStore.state.showAPIVersionChanges) {
+        this.$emit('setNavigatorAPIChanges', changes);
+        return changes;
+      }
+      return null;
     },
     /**
      * Extracts the technology data, for the currently chosen language
