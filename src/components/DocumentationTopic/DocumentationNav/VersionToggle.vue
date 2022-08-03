@@ -48,13 +48,50 @@
       <InlineChevronDownIcon v-if="manyVersions" class="toggle-icon icon-inline" />
     </div>
 
+ <div :class="{ 'language-list-container': manyVersions }">
+      <!-- Faux element to get width of select, with current element-->
+      <select
+        class="language-dropdown language-sizer"
+        ref="language-sizer"
+        aria-hidden="true"
+        tabindex="-1"
+      >
+        <option selected>{{versionModel}}</option>
+      </select>
+      <!-- Faux element is above -->
+      <label
+        :for="versionList ? 'version-toggle' : null"
+        class="nav-menu-setting-label"
+      >Version:</label>
+      <select
+        v-if="versionList.length >1 "
+        id="version-toggle"
+        class="language-dropdown nav-menu-link"
+        :style="`width: ${adjustedWidth}px`"
+        v-model="versionModel"
+        @change="pushRoute(versionRoute)"
+      >
+         <option v-for="version in versionList"
+        v-bind:key="version"
+        :value="version">
+        {{version}}
+        </option>
+      </select>
+
+      <span
+        v-else-if="singleVersionPage"
+        class="nav-menu-toggle-none current-language"
+        aria-current="page"
+      >{{singleVersionPage}}</span>
+      <!-- removed the chevron because the spacing was off -->
+      <!-- <InlineChevronDownIcon v-if="manyVersions" class="toggle-icon icon-inline" /> -->
+    </div>
   </NavMenuItemBase>
 </template>
 
 <script>
 import DocumentationTopicStore from 'docc-render/stores/DocumentationTopicStore';
 import { waitFrames } from 'docc-render/utils/loading';
-import Language from 'docc-render/constants/Language';
 import debounce from 'docc-render/utils/debounce';
 import NavMenuItemBase from 'docc-render/components/NavMenuItemBase.vue';
 import InlineChevronDownIcon from 'theme/components/Icons/InlineChevronDownIcon.vue';
@@ -72,18 +109,6 @@ export default {
     },
   },
   props: {
-    interfaceLanguage: {
-      type: String,
-      required: true,
-    },
-    objcPath: {
-      type: String,
-      required: false,
-    },
-    swiftPath: {
-      type: String,
-      required: false,
-    },
     versionList: {
       type: Array,
       required: false,
@@ -91,7 +116,6 @@ export default {
   },
   data() {
     return {
-      languageModel: null,
       adjustedWidth: 0,
       versionModel: null,
     };
@@ -115,16 +139,12 @@ export default {
     this.versionModel = this.currentVersion;
   },
   watch: {
-    interfaceLanguage: {
-      immediate: true,
-      handler(language) {
-        this.languageModel = language;
-      },
-    },
-    currentLanguage: {
-      immediate: true,
-      handler: 'calculateSelectWidth',
-    },
+    // interfaceLanguage: {
+    //   immediate: true,
+    //   handler(language) {
+    //     this.languageModel = language;
+    //   },
+    // },
     versionModel: {
       immediate: true,
       handler: 'calculateSelectWidth',
@@ -183,42 +203,18 @@ export default {
     manyVersions() {
       return !this.singleVersionPage && this.versionList;
     },
-    languages() {
-      return [
-        {
-          name: Language.swift.name,
-          api: Language.swift.key.api,
-          route: {
-            path: this.swiftPath,
-            query: Language.swift.key.url,
-          },
-        },
-        {
-          name: Language.objectiveC.name,
-          api: Language.objectiveC.key.api,
-          route: {
-            path: this.objcPath,
-            query: Language.objectiveC.key.url,
-          },
-        },
-      ];
-    },
-    currentLanguage: ({ languages, languageModel }) => (
-      languages.find(lang => lang.api === languageModel)
-    ),
     versionRoute() {
       return {
         // make sure we dont loose any extra query params on the way
         query: this.versionModel,
         // need to fix to get default
-        path: this.swiftPath || this.objcPath,
+        path: this.$route.path,
       };
     },
     currentVersion() {
       // Check if versionModel toggle is being used
 
       // If it hasnt been used, check the state.
-      console.log('computed', DocumentationTopicStore.state.preferredVersion);
       if (DocumentationTopicStore.state.preferredVersion
       && this.versionList
       && this.versionList.includes(DocumentationTopicStore.state.preferredVersion)) {
@@ -227,7 +223,6 @@ export default {
       // If the version doesn't exist.
       return this.versionList[0];
     },
-    hasLanguages: ({ objcPath, swiftPath }) => swiftPath && objcPath,
   },
 };
 </script>

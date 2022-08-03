@@ -66,10 +66,7 @@
         />
         <VersionToggle
           v-if="versionList"
-          :interfaceLanguage="interfaceLanguage"
           :versionList="versionList"
-          :objcPath="objcPath"
-          :swiftPath="swiftPath"
         />
         <slot name="menu-items" />
       </NavMenuItems>
