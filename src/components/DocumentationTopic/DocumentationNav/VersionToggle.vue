@@ -48,44 +48,6 @@
       <InlineChevronDownIcon v-if="manyVersions" class="toggle-icon icon-inline" />
     </div>
 
- <div :class="{ 'language-list-container': manyVersions }">
-      <!-- Faux element to get width of select, with current element-->
-      <select
-        class="language-dropdown language-sizer"
-        ref="language-sizer"
-        aria-hidden="true"
-        tabindex="-1"
-      >
-        <option selected>{{versionModel}}</option>
-      </select>
-      <!-- Faux element is above -->
-      <label
-        :for="versionList ? 'version-toggle' : null"
-        class="nav-menu-setting-label"
-      >Version:</label>
-      <select
-        v-if="versionList.length >1 "
-        id="version-toggle"
-        class="language-dropdown nav-menu-link"
-        :style="`width: ${adjustedWidth}px`"
-        v-model="versionModel"
-        @change="pushRoute(versionRoute)"
-      >
-         <option v-for="version in versionList"
-        v-bind:key="version"
-        :value="version">
-        {{version}}
-        </option>
-      </select>
-
-      <span
-        v-else-if="singleVersionPage"
-        class="nav-menu-toggle-none current-language"
-        aria-current="page"
-      >{{singleVersionPage}}</span>
-      <!-- removed the chevron because the spacing was off -->
-      <!-- <InlineChevronDownIcon v-if="manyVersions" class="toggle-icon icon-inline" /> -->
-    </div>
   </NavMenuItemBase>
 </template>
 
