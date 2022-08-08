@@ -66,10 +66,7 @@
         />
         <VersionToggle
           v-if="versionList && enableVersioning"
-          :interfaceLanguage="interfaceLanguage"
           :versionList="versionList"
-          :objcPath="objcPath"
-          :swiftPath="swiftPath"
         />
         <VersionAPIToggle
           v-if="earlierVersions && earlierVersions.length >=1 &&

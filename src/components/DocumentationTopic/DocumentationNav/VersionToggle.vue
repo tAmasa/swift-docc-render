@@ -9,12 +9,12 @@
 -->
 
 <template>
-  <NavMenuItemBase class="nav-menu-setting language-container">
-    <div :class="{ 'language-toggle-container': manyVersions }">
+  <NavMenuItemBase class="nav-menu-setting version-container">
+    <div :class="{ 'version-toggle-container': manyVersions }">
       <!-- Faux element to get width of select, with current element-->
       <select
-        class="language-dropdown language-sizer"
-        ref="language-sizer"
+        class="version-dropdown version-sizer"
+        ref="version-sizer"
         aria-hidden="true"
         tabindex="-1"
       >
@@ -28,7 +28,7 @@
       <select
         v-if="versionList && versionList.length >1 "
         id="version-toggle"
-        class="language-dropdown nav-menu-link"
+        class="version-dropdown nav-menu-link"
         :style="`width: ${adjustedWidth}px`"
         v-model="versionModel"
         @change="pushRoute(versionRoute)"
@@ -36,24 +36,24 @@
          <option v-for="version in versionList"
         v-bind:key="version"
         :value="version">
-        {{ version }}
+        {{version}}
         </option>
       </select>
 
       <span
         v-else-if="singleVersionPage"
-        class="nav-menu-toggle-none current-language"
+        class="nav-menu-toggle-none current-version"
         aria-current="page"
-      >{{ singleVersionPage }} </span>
+      >{{singleVersionPage}}</span>
       <InlineChevronDownIcon v-if="manyVersions" class="toggle-icon icon-inline" />
     </div>
+
   </NavMenuItemBase>
 </template>
 
 <script>
 import DocumentationTopicStore from 'docc-render/stores/DocumentationTopicStore';
 import { waitFrames } from 'docc-render/utils/loading';
-import Language from 'docc-render/constants/Language';
 import debounce from 'docc-render/utils/debounce';
 import NavMenuItemBase from 'docc-render/components/NavMenuItemBase.vue';
 import InlineChevronDownIcon from 'theme/components/Icons/InlineChevronDownIcon.vue';
@@ -66,26 +66,11 @@ export default {
       default() {
         return {
           setPreferredVersion() {},
-          state: { showApiChanges: false, preferredVersion: null },
         };
       },
     },
   },
-  // TODO: Deprecate
-
   props: {
-    interfaceLanguage: {
-      type: String,
-      required: true,
-    },
-    objcPath: {
-      type: String,
-      required: false,
-    },
-    swiftPath: {
-      type: String,
-      required: false,
-    },
     versionList: {
       type: Array,
       required: false,
@@ -93,9 +78,6 @@ export default {
   },
   data() {
     return {
-      // TODO: Deprecate
-      docState: this.store.state,
-      languageModel: null,
       adjustedWidth: 0,
       versionModel: null,
     };
@@ -117,22 +99,14 @@ export default {
   },
   updated() {
     this.versionModel = this.currentVersion;
-    if (this.docState.showAPIVersionChanges && !this.docState.preferredVersion) {
-      this.store.setPreferredVersion(this.versionList[0]);
-      this.pushRoute(this.versionRoute);
-    }
   },
   watch: {
-    interfaceLanguage: {
-      immediate: true,
-      handler(language) {
-        this.languageModel = language;
-      },
-    },
-    currentLanguage: {
-      immediate: true,
-      handler: 'calculateSelectWidth',
-    },
+    // interfaceversion: {
+    //   immediate: true,
+    //   handler(version) {
+    //     this.versionModel = version;
+    //   },
+    // },
     versionModel: {
       immediate: true,
       handler: 'calculateSelectWidth',
@@ -142,7 +116,7 @@ export default {
     /**
      * Returns a formatted route object
      * @param {{ query: string, path: string }} route - a config object passed by the render JSON
-     * @returns {{ path: (null|string), query: { language: (string|undefined) }}}
+     * @returns {{ path: (null|string), query: { version: (string|undefined) }}}
      */
     getRoute(route) {
       // pass undefined to remove the query param if its most recent version
@@ -157,11 +131,11 @@ export default {
     //   this.store.setPreferredVersion(version);
     // },
     pushRoute(route) {
-      // Persist the selected language as a preference in the store (backed by
+      // Persist the selected version as a preference in the store (backed by
       // the browser's local storage so that it can be retrieved later for
       // subsequent navigation without the query parameter present)
       this.store.setPreferredVersion(route.query);
-      // Navigate to the language variant page
+      // Navigate to the version variant page
       this.$router.push(this.getRoute(route));
     },
     isCurrentPath(path) {
@@ -181,7 +155,7 @@ export default {
     async calculateSelectWidth() {
       // await next tick, so we are sure the element is rendered.
       await this.$nextTick();
-      this.adjustedWidth = this.$refs['language-sizer'].clientWidth + 6;
+      this.adjustedWidth = this.$refs['version-sizer'].clientWidth + 6;
     },
   },
   computed: {
@@ -191,37 +165,12 @@ export default {
     manyVersions() {
       return !this.singleVersionPage && this.versionList;
     },
-    // TODO: Deprecate
-    languages() {
-      return [
-        {
-          name: Language.swift.name,
-          api: Language.swift.key.api,
-          route: {
-            path: this.swiftPath,
-            query: Language.swift.key.url,
-          },
-        },
-        {
-          name: Language.objectiveC.name,
-          api: Language.objectiveC.key.api,
-          route: {
-            path: this.objcPath,
-            query: Language.objectiveC.key.url,
-          },
-        },
-      ];
-    },
-    // TODO: Deprecate
-    currentLanguage: ({ languages, languageModel }) => (
-      languages.find(lang => lang.api === languageModel)
-    ),
     versionRoute() {
       return {
         // make sure we dont loose any extra query params on the way
         query: this.versionModel,
         // need to fix to get default
-        path: this.swiftPath || this.objcPath,
+        path: this.$route.path,
       };
     },
     currentVersion() {
@@ -236,8 +185,6 @@ export default {
       // If the version doesn't exist.
       return this.versionList[0];
     },
-    // TODO: Deprecate
-    hasLanguages: ({ objcPath, swiftPath }) => swiftPath && objcPath,
   },
 };
 </script>
@@ -253,7 +200,7 @@ $nav-menu-toggle-label-margin: 6px;
   white-space: nowrap;
 }
 
-.language {
+.version {
   &-dropdown {
     -webkit-text-size-adjust: none;
     appearance: none;
@@ -311,7 +258,7 @@ $nav-menu-toggle-label-margin: 6px;
   }
 }
 
-.language-list {
+.version-list {
   display: inline-block;
   margin-top: 0;
 
