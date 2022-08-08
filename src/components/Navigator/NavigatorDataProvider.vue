@@ -87,9 +87,6 @@ export default {
       try {
         this.isFetching = true;
         this.allIndexData = await fetchIndexPathsData();
-        // {interfaceLanguages} = this.versionedNavigationIndex
-        // TODO: Why did Dobri use a freze?
-        // this.navigationIndex = Object.freeze(interfaceLanguages);
       } catch (e) {
         this.errorFetching = true;
       } finally {
