@@ -9,12 +9,12 @@
 -->
 
 <template>
-  <NavMenuItemBase class="nav-menu-setting language-container">
-    <div :class="{ 'language-toggle-container': manyVersions }">
+  <NavMenuItemBase class="nav-menu-setting version-container">
+    <div :class="{ 'version-toggle-container': manyVersions }">
       <!-- Faux element to get width of select, with current element-->
       <select
-        class="language-dropdown language-sizer"
-        ref="language-sizer"
+        class="version-dropdown version-sizer"
+        ref="version-sizer"
         aria-hidden="true"
         tabindex="-1"
       >
@@ -28,7 +28,7 @@
       <select
         v-if="versionList.length >1 "
         id="version-toggle"
-        class="language-dropdown nav-menu-link"
+        class="version-dropdown nav-menu-link"
         :style="`width: ${adjustedWidth}px`"
         v-model="versionModel"
         @change="pushRoute(versionRoute)"
@@ -42,7 +42,7 @@
 
       <span
         v-else-if="singleVersionPage"
-        class="nav-menu-toggle-none current-language"
+        class="nav-menu-toggle-none current-version"
         aria-current="page"
       >{{singleVersionPage}}</span>
       <InlineChevronDownIcon v-if="manyVersions" class="toggle-icon icon-inline" />
@@ -101,10 +101,10 @@ export default {
     this.versionModel = this.currentVersion;
   },
   watch: {
-    // interfaceLanguage: {
+    // interfaceversion: {
     //   immediate: true,
-    //   handler(language) {
-    //     this.languageModel = language;
+    //   handler(version) {
+    //     this.versionModel = version;
     //   },
     // },
     versionModel: {
@@ -116,7 +116,7 @@ export default {
     /**
      * Returns a formatted route object
      * @param {{ query: string, path: string }} route - a config object passed by the render JSON
-     * @returns {{ path: (null|string), query: { language: (string|undefined) }}}
+     * @returns {{ path: (null|string), query: { version: (string|undefined) }}}
      */
     getRoute(route) {
       // pass undefined to remove the query param if its most recent version
@@ -131,11 +131,11 @@ export default {
     //   this.store.setPreferredVersion(version);
     // },
     pushRoute(route) {
-      // Persist the selected language as a preference in the store (backed by
+      // Persist the selected version as a preference in the store (backed by
       // the browser's local storage so that it can be retrieved later for
       // subsequent navigation without the query parameter present)
       this.store.setPreferredVersion(route.query);
-      // Navigate to the language variant page
+      // Navigate to the version variant page
       this.$router.push(this.getRoute(route));
     },
     isCurrentPath(path) {
@@ -155,7 +155,7 @@ export default {
     async calculateSelectWidth() {
       // await next tick, so we are sure the element is rendered.
       await this.$nextTick();
-      this.adjustedWidth = this.$refs['language-sizer'].clientWidth + 6;
+      this.adjustedWidth = this.$refs['version-sizer'].clientWidth + 6;
     },
   },
   computed: {
@@ -200,7 +200,7 @@ $nav-menu-toggle-label-margin: 6px;
   white-space: nowrap;
 }
 
-.language {
+.version {
   &-dropdown {
     -webkit-text-size-adjust: none;
     appearance: none;
@@ -258,7 +258,7 @@ $nav-menu-toggle-label-margin: 6px;
   }
 }
 
-.language-list {
+.version-list {
   display: inline-block;
   margin-top: 0;
 
