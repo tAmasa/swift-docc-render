@@ -15,6 +15,7 @@ describe('DocumentationTopicStore', () => {
   const defaultState = {
     onThisPageSections: [],
     preferredLanguage: null,
+    preferredVersion: null,
     ...ApiChangesStoreBase.state,
   };
 
