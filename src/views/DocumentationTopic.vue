@@ -122,8 +122,8 @@ export default {
     };
   },
   computed: {
-    objcOverrides: ({ topicData }) => {
-      const { variantOverrides = [] } = topicData || {};
+    objcOverrides: ({ versionedTopicData }) => {
+      const { variantOverrides = [] } = versionedTopicData || {};
 
       const isObjcTrait = ({ interfaceLanguage }) => (
         interfaceLanguage === Language.objectiveC.key.api
