@@ -55,7 +55,6 @@
 <script>
 import DocumentationTopicStore from 'docc-render/stores/DocumentationTopicStore';
 import { waitFrames } from 'docc-render/utils/loading';
-import Language from 'docc-render/constants/Language';
 import debounce from 'docc-render/utils/debounce';
 import NavMenuItemBase from 'docc-render/components/NavMenuItemBase.vue';
 import InlineChevronDownIcon from 'theme/components/Icons/InlineChevronDownIcon.vue';
@@ -75,18 +74,6 @@ export default {
   // TODO: Deprecate
 
   props: {
-    interfaceLanguage: {
-      type: String,
-      required: true,
-    },
-    objcPath: {
-      type: String,
-      required: false,
-    },
-    swiftPath: {
-      type: String,
-      required: false,
-    },
     versionList: {
       type: Array,
       required: false,
@@ -125,10 +112,6 @@ export default {
       handler(language) {
         this.languageModel = language;
       },
-    },
-    currentLanguage: {
-      immediate: true,
-      handler: 'calculateSelectWidth',
     },
     versionModel: {
       immediate: true,
@@ -207,37 +190,12 @@ export default {
     manyVersions() {
       return !this.singleVersionPage && this.versionList;
     },
-    // TODO: Deprecate
-    languages() {
-      return [
-        {
-          name: Language.swift.name,
-          api: Language.swift.key.api,
-          route: {
-            path: this.swiftPath,
-            query: Language.swift.key.url,
-          },
-        },
-        {
-          name: Language.objectiveC.name,
-          api: Language.objectiveC.key.api,
-          route: {
-            path: this.objcPath,
-            query: Language.objectiveC.key.url,
-          },
-        },
-      ];
-    },
-    // TODO: Deprecate
-    currentLanguage: ({ languages, languageModel }) => (
-      languages.find(lang => lang.api === languageModel)
-    ),
     versionRoute() {
       return {
         // make sure we dont loose any extra query params on the way
         query: this.versionModel,
         // need to fix to get default
-        path: this.swiftPath || this.objcPath,
+        path: this.$route.path,
       };
     },
     currentVersion() {

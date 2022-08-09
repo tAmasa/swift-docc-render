@@ -71,10 +71,7 @@
         <VersionAPIToggle
           v-if="earlierVersions && earlierVersions.length >=1 &&
           store.state.showAPIVersionChanges && enableVersioning && enableDiffing"
-          :interfaceLanguage="interfaceLanguage"
           :versionList="earlierVersions"
-          :objcPath="objcPath"
-          :swiftPath="swiftPath"
         />
         <ShowApiChangesToggle v-if="versionList && versionList.length >=2
           && enableVersioning && enableDiffing" />
