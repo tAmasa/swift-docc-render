@@ -127,9 +127,6 @@ export default {
     preferredVersion() {
       return this.store.state.preferredVersion;
     },
-    // navigatorAPIChanges() {
-    //   return DocumentationTopicStore.state.navigatorAPIChanges;
-    // },
     objcOverrides: ({ versionedTopicData }) => {
       const { variantOverrides = [] } = versionedTopicData || {};
 
@@ -143,46 +140,18 @@ export default {
     },
     topicData: {
       get() {
-        // if (this.topicDataDefault === null) return null;
-        // const versionedTopicDataDefault = patchToVersion(this.version, this.topicDataDefault);
-        // console.log('what is version?', this.version);
-        // return this.topicDataObjc ? this.topicDataObjc : versionedTopicDataDefault;
-        // if (dataHasVersion(this.topicDataDefault)) {
-        //   if (!this.versionList.includes(this.topicDataDefault.metadata.displayName)) {
-        //     // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        //     this.version = this.topicDataDefault.metadata.version.displayName;
-        //   }
-        // }
-        // this.calculateReferenceDiffs();
         return this.topicDataObjc ? this.topicDataObjc : this.versionedTopicData;
       },
       set(data) {
-        // if (dataHasVersion(data)) {
-        //   this.version = data.metadata.version.displayName;
-        // }
         this.topicDataDefault = data;
       },
     },
     versionedTopicData() {
-      // var pageVersion = null;
-      // if (DocumentationTopicStore.state.preferredVersion) {
-      //   pageVersion = DocumentationTopicStore.state.preferredVersion;
-      // } else if (this.topicDataDefault) {
-      //   pageVersion = this.topicDataDefault;
-      // }
       return patchToVersion(this.store.state.preferredVersion, this.topicDataDefault);
     },
     versionList() {
       return initializeVersionList(this.topicDataDefault);
     },
-    // pageVersionAPIChanges() {
-    //   const pageReferences = this.topicData.references;
-    //   const identifierChanges = IdentifierAPIChangesFromNavigation(pageReferences,
-    //     this.store.state.navigatorAPIChanges);
-    //   this.store.setAPIChanges(identifierChanges);
-    //   return identifierChanges;
-    //   // return -1;
-    // },
     earlierVersions() {
       if (!this.versionList) return [];
       let index = this.versionList.indexOf(this.store.state.preferredVersion);
@@ -355,20 +324,13 @@ export default {
      * @yields page ref
      */
     calculateReferenceDiffs() {
-      // console.log('fun hit');
-      // console.log('a', this.store.state.navigatorAPIChanges);
-      // console.log('b', this.topicData.references);
-      // console.log('hitting func');
       if (!this.topicData) {
-        // console.log('topicdata not set');
         return;
       }
       const pageReferences = this.topicData.references;
       const identifierChanges = IdentifierAPIChangesFromNavigation(pageReferences,
         DocumentationTopicStore.state.navigatorAPIChanges);
       DocumentationTopicStore.setAPIChanges(identifierChanges);
-      // console.log('ident', identifierChanges);
-      // return identifierChanges;
     },
   },
   mounted() {
