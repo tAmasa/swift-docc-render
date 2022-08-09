@@ -94,10 +94,8 @@ import Navigator from 'docc-render/components/Navigator.vue';
 import DocumentationNav from 'theme/components/DocumentationTopic/DocumentationNav.vue';
 import { compareVersions, combineVersions } from 'docc-render/utils/schema-version-check';
 import { BreakpointName } from 'docc-render/utils/breakpoints';
-import BaseDropdown from 'docc-render/components/BaseDropdown.vue';
 
 const MIN_RENDER_JSON_VERSION_WITH_INDEX = '0.3.0';
-
 export default {
   name: 'DocumentationTopicView',
   constants: { MIN_RENDER_JSON_VERSION_WITH_INDEX },
@@ -108,7 +106,6 @@ export default {
     Topic: DocumentationTopic,
     CodeTheme,
     Nav: DocumentationNav,
-    BaseDropdown,
   },
   mixins: [performanceMetrics, onPageLoadScrollToFragment],
   data() {
@@ -325,11 +322,8 @@ export default {
   beforeRouteEnter(to, from, next) {
     fetchDataForRouteEnter(to, from, next).then(data => next((vm) => {
       vm.topicData = data; // eslint-disable-line no-param-reassign
-      console.log('hello!');
       if (to.query.version) {
-        console.log('version', vm.version);
         vm.version = to.query.version; // eslint-disable-line no-param-reassign
-        console.log('version', vm.version);
         // eslint-disable-next-line no-param-reassign
         // vm.topicDataDefault = data;
       }
