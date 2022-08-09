@@ -23,6 +23,7 @@ export default {
   reset() {
     this.state.onThisPageSections = [];
     this.state.preferredLanguage = Settings.preferredLanguage;
+    this.state.preferredVersion = Settings.preferredVersion;
     this.resetApiChanges();
   },
   addOnThisPageSection(section) {
