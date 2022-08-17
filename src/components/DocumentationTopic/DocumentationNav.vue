@@ -65,7 +65,7 @@
           :swiftPath="swiftPath"
         />
         <VersionToggle
-          v-if="versionList"
+          v-if="versionList.length"
           :versionList="versionList"
         />
         <slot name="menu-items" />
@@ -148,7 +148,7 @@ export default {
     },
     versionList: {
       type: Array,
-      required: false,
+      default: () => [],
     },
   },
   computed: {

@@ -67,7 +67,6 @@ export default {
      */
     technologyWithChildren({ versionedNavigationIndex, interfaceLanguage, technologyPath }) {
       // get the technologies for the current language
-      // eslint-disable-next-line max-len
       let currentLangTechnologies = versionedNavigationIndex[interfaceLanguage] || [];
       // if no such items, we use the default swift one
       if (!currentLangTechnologies.length) {

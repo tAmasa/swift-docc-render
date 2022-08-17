@@ -40,15 +40,14 @@ function getDiffIndex(displayName, data) {
  * @returns {Array} of versions
  */
 function initializeVersionList(data) {
+  let versions = [];
   if (dataHasVersion(data)) {
-    let versions = [];
     if (data.versions) {
       versions = data.versions.map(x => x.version.displayName);
     }
     versions.unshift(data.metadata.version.displayName);
-    return versions;
   }
-  return null;
+  return versions;
 }
 /**
  * Patch a given JSON file to a different version/state given a display name
@@ -59,12 +58,9 @@ function initializeVersionList(data) {
  */
 function patchToVersion(displayName, data) {
   if (!data) return null;
-  if (!displayName) return data;
-  if (!dataHasVersion(data)) return data;
+  if (!displayName || !dataHasVersion(data)) return data;
   const patchIndex = getDiffIndex(displayName, data);
-  if (patchIndex === -1) {
-    return data;
-  }
+  if (patchIndex === -1) return data;
   let patchJSON = clone(data);
   for (let i = 0; i <= patchIndex; i++) {
     patchJSON = apply(patchJSON, data.versions[i].patch);

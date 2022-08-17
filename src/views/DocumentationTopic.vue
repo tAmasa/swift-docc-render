@@ -324,8 +324,6 @@ export default {
       vm.topicData = data; // eslint-disable-line no-param-reassign
       if (to.query.version) {
         vm.version = to.query.version; // eslint-disable-line no-param-reassign
-        // eslint-disable-next-line no-param-reassign
-        // vm.topicDataDefault = data;
       }
       if (to.query.language === Language.objectiveC.key.url && vm.objcOverrides) {
         vm.applyObjcOverrides();

@@ -10,7 +10,7 @@
 
 <template>
   <NavMenuItemBase class="nav-menu-setting version-container">
-    <div :class="{ 'version-toggle-container': manyVersions }">
+    <div :class="{ 'version-toggle-container': hasMultipleVersions }">
       <!-- Faux element to get width of select, with current element-->
       <select
         class="version-dropdown version-sizer"
@@ -18,36 +18,37 @@
         aria-hidden="true"
         tabindex="-1"
       >
-        <option selected>{{versionModel}}</option>
+        <option selected>{{ versionModel }}</option>
       </select>
       <!-- Faux element is above -->
       <label
-        :for="versionList ? 'version-toggle' : null"
+        :for="versionList.length ? 'version-toggle' : null"
         class="nav-menu-setting-label"
-      >Version:</label>
+        >Version:</label
+      >
       <select
-        v-if="versionList.length >1 "
+        v-if="versionList.length > 1"
         id="version-toggle"
         class="version-dropdown nav-menu-link"
         :style="`width: ${adjustedWidth}px`"
         v-model="versionModel"
         @change="pushRoute(versionRoute)"
       >
-         <option v-for="version in versionList"
-        v-bind:key="version"
-        :value="version">
-        {{version}}
+        <option v-for="version in versionList" :key="version" :value="version">
+          {{ version }}
         </option>
       </select>
-
       <span
         v-else-if="singleVersionPage"
         class="nav-menu-toggle-none current-version"
         aria-current="page"
-      >{{singleVersionPage}}</span>
-      <InlineChevronDownIcon v-if="manyVersions" class="toggle-icon icon-inline" />
+        >{{ singleVersionPage }}</span
+      >
+      <InlineChevronDownIcon
+        v-if="hasMultipleVersions"
+        class="toggle-icon icon-inline"
+      />
     </div>
-
   </NavMenuItemBase>
 </template>
 
@@ -84,12 +85,16 @@ export default {
   },
   mounted() {
     // on resize, re-calculate the width of the select.
-    const cb = debounce(async () => {
-      // we wait for 3 frames, as that is the minimum it takes
-      // for the browser orientation-change transitions to finish
-      await waitFrames(3);
-      this.calculateSelectWidth();
-    }, 150, true);
+    const cb = debounce(
+      async () => {
+        // we wait for 3 frames, as that is the minimum it takes
+        // for the browser orientation-change transitions to finish
+        await waitFrames(3);
+        this.calculateSelectWidth();
+      },
+      150,
+      true,
+    );
     window.addEventListener('resize', cb);
     window.addEventListener('orientationchange', cb);
     this.$once('hook:beforeDestroy', () => {
@@ -127,9 +132,6 @@ export default {
         path: this.isCurrentPath(route.path) ? null : this.normalizePath(route.path),
       };
     },
-    // foo(version) {
-    //   this.store.setPreferredVersion(version);
-    // },
     pushRoute(route) {
       // Persist the selected version as a preference in the store (backed by
       // the browser's local storage so that it can be retrieved later for
@@ -160,11 +162,9 @@ export default {
   },
   computed: {
     singleVersionPage() {
-      return (this.versionList && this.versionList.length === 1) ? this.versionList[0] : null;
+      return this.versionList && this.versionList.length === 1 ? this.versionList[0] : null;
     },
-    manyVersions() {
-      return !this.singleVersionPage && this.versionList;
-    },
+    hasMultipleVersions: ({ versionList }) => versionList.length > 1,
     versionRoute() {
       return {
         // make sure we dont loose any extra query params on the way
@@ -177,9 +177,11 @@ export default {
       // Check if versionModel toggle is being used
 
       // If it hasnt been used, check the state.
-      if (DocumentationTopicStore.state.preferredVersion
-      && this.versionList
-      && this.versionList.includes(DocumentationTopicStore.state.preferredVersion)) {
+      if (
+        DocumentationTopicStore.state.preferredVersion
+        && this.versionList
+        && this.versionList.includes(DocumentationTopicStore.state.preferredVersion)
+      ) {
         return DocumentationTopicStore.state.preferredVersion;
       }
       // If the version doesn't exist.
@@ -190,7 +192,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'docc-render/styles/_core.scss';
+@import "docc-render/styles/_core.scss";
 
 $dropdown-icon-padding: 11px;
 $nav-menu-toggle-label-margin: 6px;
