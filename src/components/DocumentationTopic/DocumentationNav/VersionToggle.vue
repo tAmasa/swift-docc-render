@@ -27,7 +27,7 @@
         >Version:</label
       >
       <select
-        v-if="versionList.length > 1"
+        v-if="hasMultipleVersions"
         id="version-toggle"
         class="version-dropdown nav-menu-link"
         :style="`width: ${adjustedWidth}px`"
@@ -39,7 +39,8 @@
         </option>
       </select>
       <span
-        v-else-if="singleVersionPage"
+        v-else-if="hasSingleVersion"
+        id = "single-version-page"
         class="nav-menu-toggle-none current-version"
         aria-current="page"
         >{{ singleVersionPage }}</span
@@ -74,7 +75,7 @@ export default {
   props: {
     versionList: {
       type: Array,
-      required: false,
+      default: () => [],
     },
   },
   data() {
@@ -164,6 +165,7 @@ export default {
     singleVersionPage() {
       return this.versionList && this.versionList.length === 1 ? this.versionList[0] : null;
     },
+    hasSingleVersion: ({ versionList }) => versionList.length === 1,
     hasMultipleVersions: ({ versionList }) => versionList.length > 1,
     versionRoute() {
       return {
