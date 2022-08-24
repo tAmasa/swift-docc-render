@@ -83,6 +83,13 @@ describe('DocumentationTopicStore', () => {
     });
   });
 
+  describe('setPreferredVersion', () => {
+    it('sets the `setPreferredVersion` state', () => {
+      DocumentationTopicStore.setPreferredVersion('V3');
+      expect(DocumentationTopicStore.state.preferredVersion).toBe('V3');
+    });
+  });
+
   describe('APIChanges', () => {
     it('sets the API changes', () => {
       const apiChanges = { foo: 'bar' };

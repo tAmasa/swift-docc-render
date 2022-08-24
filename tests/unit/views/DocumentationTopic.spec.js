@@ -393,7 +393,7 @@ describe('DocumentationTopic', () => {
       interfaceLanguage: topicData.identifier.interfaceLanguage,
       objcPath: topicData.variants[0].paths[0],
       swiftPath: topicData.variants[1].paths[0],
-      versionList: null,
+      versionList: [],
     });
     expect(nav.attributes()).toMatchObject({
       interfacelanguage: 'swift',
