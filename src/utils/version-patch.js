@@ -60,7 +60,7 @@ function patchToVersion(displayName, data) {
   if (!data) return null;
   if (!displayName || !dataHasVersion(data)) return data;
   const patchIndex = getDiffIndex(displayName, data);
-  if (patchIndex === -1) return data;
+  if (patchIndex < 0) return data;
   let patchJSON = clone(data);
   for (let i = 0; i <= patchIndex; i++) {
     patchJSON = apply(patchJSON, data.versions[i].patch);
