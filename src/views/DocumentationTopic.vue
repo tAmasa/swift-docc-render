@@ -24,6 +24,7 @@
         :currentTopicTags="topicProps.tags"
         :references="topicProps.references"
         :isWideFormat="enableNavigator"
+        :versionList="versionList"
         @toggle-sidenav="isSideNavOpen = !isSideNavOpen"
       />
       <component
@@ -73,6 +74,7 @@
 
 <script>
 import { apply } from 'docc-render/utils/json-patch';
+import { patchToVersion, initializeVersionList } from 'docc-render/utils/version-patch';
 import { TopicRole } from 'docc-render/constants/roles';
 import {
   clone,
@@ -94,7 +96,6 @@ import { compareVersions, combineVersions } from 'docc-render/utils/schema-versi
 import { BreakpointName } from 'docc-render/utils/breakpoints';
 
 const MIN_RENDER_JSON_VERSION_WITH_INDEX = '0.3.0';
-
 export default {
   name: 'DocumentationTopicView',
   constants: { MIN_RENDER_JSON_VERSION_WITH_INDEX },
@@ -112,13 +113,14 @@ export default {
       topicDataDefault: null,
       topicDataObjc: null,
       isSideNavOpen: false,
+      version: null,
       store: DocumentationTopicStore,
       BreakpointName,
     };
   },
   computed: {
-    objcOverrides: ({ topicData }) => {
-      const { variantOverrides = [] } = topicData || {};
+    objcOverrides: ({ versionedTopicData }) => {
+      const { variantOverrides = [] } = versionedTopicData || {};
 
       const isObjcTrait = ({ interfaceLanguage }) => (
         interfaceLanguage === Language.objectiveC.key.api
@@ -130,11 +132,17 @@ export default {
     },
     topicData: {
       get() {
-        return this.topicDataObjc ? this.topicDataObjc : this.topicDataDefault;
+        return this.topicDataObjc ? this.topicDataObjc : this.versionedTopicData;
       },
       set(data) {
         this.topicDataDefault = data;
       },
+    },
+    versionedTopicData() {
+      return patchToVersion(this.store.state.preferredVersion, this.topicDataDefault);
+    },
+    versionList() {
+      return initializeVersionList(this.topicDataDefault);
     },
     topicKey: ({ $route, topicProps }) => [
       $route.path,
@@ -314,6 +322,9 @@ export default {
   beforeRouteEnter(to, from, next) {
     fetchDataForRouteEnter(to, from, next).then(data => next((vm) => {
       vm.topicData = data; // eslint-disable-line no-param-reassign
+      if (to.query.version) {
+        vm.version = to.query.version; // eslint-disable-line no-param-reassign
+      }
       if (to.query.language === Language.objectiveC.key.url && vm.objcOverrides) {
         vm.applyObjcOverrides();
       }
@@ -346,6 +357,9 @@ export default {
         // Send a 'rendered' message to the host when new data has been patched onto the DOM.
         this.newContentMounted();
       });
+    },
+    version(pageVersion) {
+      this.store.setPreferredVersion(pageVersion);
     },
   },
 };

@@ -17,11 +17,13 @@ export default {
   state: {
     onThisPageSections: [],
     preferredLanguage: Settings.preferredLanguage,
+    preferredVersion: Settings.preferredVersion,
     ...changesState,
   },
   reset() {
     this.state.onThisPageSections = [];
     this.state.preferredLanguage = Settings.preferredLanguage;
+    this.state.preferredVersion = Settings.preferredVersion;
     this.resetApiChanges();
   },
   addOnThisPageSection(section) {
@@ -30,6 +32,10 @@ export default {
   setPreferredLanguage(language) {
     this.state.preferredLanguage = language;
     Settings.preferredLanguage = this.state.preferredLanguage;
+  },
+  setPreferredVersion(version) {
+    this.state.preferredVersion = version;
+    Settings.preferredVersion = this.state.preferredVersion;
   },
   ...changesActions,
 };

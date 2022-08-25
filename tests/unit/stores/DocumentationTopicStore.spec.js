@@ -15,6 +15,7 @@ describe('DocumentationTopicStore', () => {
   const defaultState = {
     onThisPageSections: [],
     preferredLanguage: null,
+    preferredVersion: null,
     ...ApiChangesStoreBase.state,
   };
 
@@ -79,6 +80,13 @@ describe('DocumentationTopicStore', () => {
     it('sets the `preferredLanguage` state', () => {
       DocumentationTopicStore.setPreferredLanguage('objc');
       expect(DocumentationTopicStore.state.preferredLanguage).toBe('objc');
+    });
+  });
+
+  describe('setPreferredVersion', () => {
+    it('sets the `setPreferredVersion` state', () => {
+      DocumentationTopicStore.setPreferredVersion('V3');
+      expect(DocumentationTopicStore.state.preferredVersion).toBe('V3');
     });
   });
 
