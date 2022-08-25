@@ -128,7 +128,7 @@ export default {
       // pass undefined to remove the query param if its most recent version
       const version = route.query === this.versionList[0] ? undefined : route.query;
       return {
-        // make sure we dont loose any extra query params on the way
+        // make sure we dont lose any extra query params on the way
         query: { ...this.$route.query, version },
         path: this.isCurrentPath(route.path) ? null : this.normalizePath(route.path),
       };
