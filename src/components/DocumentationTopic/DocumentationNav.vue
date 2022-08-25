@@ -65,7 +65,7 @@
           :swiftPath="swiftPath"
         />
         <VersionToggle
-          v-if="versionList.length"
+          v-if="versionList.length && enableDiffing"
           :versionList="versionList"
         />
         <slot name="menu-items" />
@@ -83,6 +83,7 @@ import NavBase from 'docc-render/components/NavBase.vue';
 import NavMenuItems from 'docc-render/components/NavMenuItems.vue';
 import { BreakpointName } from 'docc-render/utils/breakpoints';
 import SidenavIcon from 'theme/components/Icons/SidenavIcon.vue';
+import { getSetting } from 'docc-render/utils/theme-settings';
 import Hierarchy from './DocumentationNav/Hierarchy.vue';
 import LanguageToggle from './DocumentationNav/LanguageToggle.vue';
 import VersionToggle from './DocumentationNav/VersionToggle.vue';
@@ -152,6 +153,9 @@ export default {
     },
   },
   computed: {
+    enableDiffing: () => (
+      getSetting(['features', 'docs', 'diffing', 'enable'], false)
+    ),
     BreakpointName: () => BreakpointName,
     breadcrumbCount: ({ hierarchyItems }) => hierarchyItems.length + 1,
     /**

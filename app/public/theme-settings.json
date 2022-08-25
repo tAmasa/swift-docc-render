@@ -54,6 +54,9 @@
   },
   "features": {
     "docs": {
+      "diffing":{
+        "enable": true
+      }
     }
   }
 }
